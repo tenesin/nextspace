@@ -18,7 +18,8 @@
                 @else
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         @foreach ($nextspaces as $nextspace)
-                            <x-product-card
+                            {{-- Changed to x-admin-product-card and added nextspaceId prop --}}
+                            <x-admin-product-card
                                 imageUrl="{{ $nextspace->image ?? 'https://placehold.co/400x250/E0F2F7/00B4D8?text=NextSpace+Image' }}"
                                 title="{{ $nextspace->title }}"
                                 addressLine1="{{ $nextspace->address }}"
@@ -26,28 +27,33 @@
                                 hours="{{ $nextspace->hours ?? 'N/A' }}"
                                 :timeSlots="$nextspace->time_slots ?? []"
                                 :detailUrl="route('nextspaces.show', ['id' => $nextspace->id])"
+                                :nextspaceId="$nextspace->id" {{-- Pass the nextspace ID here --}}
                             >
-                                {{-- Display Amenities and Services names --}}
-                                @if(!empty($nextspace->amenities))
-                                    <div class="mt-2 text-sm text-gray-600">
-                                        Amenities: {{ $nextspace->amenities->pluck('name')->implode(', ') }}
-                                    </div>
-                                @endif
-                                @if(!empty($nextspace->services))
-                                    <div class="mt-1 text-sm text-gray-600">
-                                        Services: {{ $nextspace->services->pluck('name')->implode(', ') }}
-                                    </div>
-                                @endif
+                                @php
+                                    $rawAmenityIds = $nextspace->amenities ?? [];
+                                    $amenityIds = is_string($rawAmenityIds) ? json_decode($rawAmenityIds, true) : $rawAmenityIds;
+                                    $amenityIds = is_array($amenityIds) ? $amenityIds : [];
+                                    $displayAmenities = \App\Models\Amenity::whereIn('id', $amenityIds)->pluck('name')->implode(', ');
 
-                                <div class="flex justify-end gap-2 mt-4 pt-4 border-t border-gray-100">
-                                    <a href="{{ route('admin.nextspaces.edit', $nextspace->id) }}" class="text-primary hover:text-primary-dark text-sm font-medium">Edit</a>
-                                    <form action="{{ route('admin.nextspaces.destroy', $nextspace->id) }}" method="POST" class="inline-block">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="text-red-600 hover:text-red-900 text-sm font-medium" onclick="return confirm('Are you sure you want to delete this NextSpace?');">Delete</button>
-                                    </form>
-                                </div>
-                            </x-product-card>
+                                    $rawServiceIds = $nextspace->services ?? [];
+                                    $serviceIds = is_string($rawServiceIds) ? json_decode($rawServiceIds, true) : $rawServiceIds;
+                                    $serviceIds = is_array($serviceIds) ? $serviceIds : [];
+                                    $displayServices = \App\Models\Service::whereIn('id', $serviceIds)->pluck('name')->implode(', ');
+                                @endphp
+
+                                @if(!empty($displayAmenities))
+                                    <div class="mt-2 text-sm text-gray-600">
+                                        Amenities: {{ $displayAmenities }}
+                                    </div>
+                                @endif
+                                @if(!empty($displayServices))
+                                    <div class="mt-1 text-sm text-gray-600">
+                                        Services: {{ $displayServices }}
+                                    </div>
+                                @endif
+                                {{-- Admin edit/delete buttons are now inside x-admin-product-card itself --}}
+                                {{-- So, this div is removed from here --}}
+                            </x-admin-product-card>
                         @endforeach
                     </div>
                 @endif
