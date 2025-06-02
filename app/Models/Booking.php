@@ -18,13 +18,16 @@ class Booking extends Model
         'nextspace_address',
         'nextspace_image_url',
         'booked_time_slot',
-        'booking_date', 
+        'booked_for', 
         'price',
         'status',
+        'booking_date'
+       
     ];
 
     protected $casts = [
-        'booking_date' => 'date',
+        'booked_for' => 'date', 
+        'booking_date' => 'date', 
         'price' => 'decimal:2',
     ];
 

@@ -7,72 +7,37 @@
                     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 mb-8">
                         <h2 class="text-2xl font-semibold text-text-primary mb-6">Our Place</h2>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {{-- Nextspace Card 1 --}}
-                            <x-product-card
-                                imageUrl="https://placehold.co/400x250/E0F2F7/00B4D8?text=NextSpace+Image"
-                                title="The Creative Hub - North Miami"
-                                addressLine1="3933 NE 163rd St"
-                                addressLine2="North Miami Beach, FL 33160"
-                                hours="Mon-Fri: 8:00 AM - 9:00 PM"
-                                :timeSlots="['09:30', '10:15', '11:15']"
-                                :detailUrl="route('nextspaces.show', ['id' => 1])" {{-- UPDATED ROUTE --}}
-                            />
-
-                            {{-- Nextspace Card 2 --}}
-                            <x-product-card
-                                imageUrl="https://placehold.co/400x250/E0F2F7/00B4D8?text=NextSpace+Image"
-                                title="Innovation Lounge - Merrick Park"
-                                addressLine1="4250 Salzedo Street,"
-                                addressLine2="Suite 1425 Coral Gables, FL 33146"
-                                hours="Mon-Sat: 9:00 AM - 10:00 PM"
-                                :timeSlots="['09:30', '10:15', '11:15']"
-                                :detailUrl="route('nextspaces.show', ['id' => 2])" {{-- UPDATED ROUTE --}}
-                            />
-
-                            {{-- Nextspace Card 3 --}}
-                            <x-product-card
-                                imageUrl="https://placehold.co/400x250/E0F2F7/00B4D8?text=NextSpace+Image"
-                                title="Event Venue - Coral Gables"
-                                addressLine1="360 San Lorenzo Avenue,"
-                                addressLine2="Suite 1430 Coral Gables, FL 33146"
-                                hours="By Appointment"
-                                :timeSlots="['09:30', '10:15', '11:15']"
-                                :detailUrl="route('nextspaces.show', ['id' => 3])" {{-- UPDATED ROUTE --}}
-                            />
-
-                            {{-- Nextspace Card 4 --}}
-                            <x-product-card
-                                imageUrl="https://placehold.co/400x250/E0F2F7/00B4D8?text=NextSpace+Image"
-                                title="Digital Nomad Hub - American Dream"
-                                addressLine1="1 American Dream Way,"
-                                addressLine2="#F225 East Rutherford, NJ 07073"
-                                hours="Mon-Sun: 10:00 AM - 9:00 PM"
-                                :timeSlots="['09:30', '10:15', '11:15']"
-                                :detailUrl="route('nextspaces.show', ['id' => 4])" {{-- UPDATED ROUTE --}}
-                            />
-
-                            {{-- Nextspace Card 5 --}}
-                            <x-product-card
-                                imageUrl="https://placehold.co/400x250/E0F2F7/00B4D8?text=NextSpace+Image"
-                                title="Shared Workspace - Sawgrass Mills"
-                                addressLine1="1760 Sawgrass Mills Circle"
-                                addressLine2="Sunrise, FL 33323-3912"
-                                hours="Mon-Sun: 11:00 AM - 10:00 PM"
-                                :timeSlots="['09:30', '10:15', '11:15']"
-                                :detailUrl="route('nextspaces.show', ['id' => 5])" {{-- UPDATED ROUTE --}}
-                            />
-
-                            {{-- Nextspace Card 6 --}}
-                            <x-product-card
-                                imageUrl="https://placehold.co/400x250/E0F2F7/00B4D8?text=NextSpace+Image"
-                                title="Executive Suites - Boca Raton"
-                                addressLine1="344 Plaza Real, Suite 1433"
-                                addressLine2="Boca Raton, FL 33432-3937"
-                                hours="Mon-Fri: 9:00 AM - 5:00 PM"
-                                :timeSlots="['09:30', '10:15', '11:15']"
-                                :detailUrl="route('nextspaces.show', ['id' => 6])" {{-- UPDATED ROUTE --}}
-                            />
+                        {{-- Adjusted grid columns for wider cards --}}
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+                            @if ($nextspaces->isEmpty())
+                                <p class="text-text-secondary text-center col-span-full">No NextSpaces available yet. Please check back later!</p>
+                            @else
+                                @foreach ($nextspaces as $nextspace)
+                                    <x-product-card
+                                        imageUrl="{{ $nextspace->image ?? 'https://placehold.co/400x250/E0F2F7/00B4D8?text=NextSpace+Image' }}"
+                                        title="{{ $nextspace->title }}"
+                                        addressLine1="{{ $nextspace->address }}"
+                                        addressLine2=""
+                                        hours="{{ $nextspace->hours ?? 'N/A' }}"
+                                        :timeSlots="$nextspace->time_slots ?? []"
+                                        :detailUrl="route('nextspaces.show', ['id' => $nextspace->id])"
+                                    >
+                                        {{-- Conditional Admin Actions for Dashboard --}}
+                                        @auth
+                                            @if (Auth::user()->role === 'admin')
+                                                <div class="flex justify-end gap-2 mt-4 pt-4 border-t border-gray-100">
+                                                    <a href="{{ route('admin.nextspaces.edit', $nextspace->id) }}" class="text-primary hover:text-primary-dark text-sm font-medium">Edit</a>
+                                                    <form action="{{ route('admin.nextspaces.destroy', $nextspace->id) }}" method="POST" class="inline-block">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="text-red-600 hover:text-red-900 text-sm font-medium" onclick="return confirm('Are you sure you want to delete this NextSpace?');">Delete</button>
+                                                    </form>
+                                                </div>
+                                            @endif
+                                        @endauth
+                                    </x-product-card>
+                                @endforeach
+                            @endif
                         </div>
                     </div>
                 </div>

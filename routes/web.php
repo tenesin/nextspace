@@ -2,29 +2,18 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\NextspaceController;
+use App\Http\Controllers\NextspaceController; // Ensure this is imported
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\HistoryController;
-use App\Http\Controllers\QrCodeController; 
-
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
+use App\Http\Controllers\QrCodeController;
+use App\Http\Controllers\Admin\NextspaceController as AdminNextspaceController;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// UPDATED: Use NextspaceController@index for the dashboard
+Route::get('/dashboard', [NextspaceController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -36,11 +25,14 @@ Route::get('/nextspaces/{id}', [NextspaceController::class, 'show'])->name('next
 
 Route::get('/payment/{nextspace_id}', [PaymentController::class, 'showPaymentForm'])->name('payment.form');
 Route::post('/payment/process', [PaymentController::class, 'processPayment'])->name('payment.process');
-Route::get('/payment/success', [PaymentController::class, 'success'])->name('payment.success');
 
 Route::get('/history', [HistoryController::class, 'index'])->middleware('auth')->name('history.index');
+Route::get('/history/{booking_id}', [HistoryController::class, 'showBookingDetails'])->name('history.show');
 
-// --- NEW QR CODE GENERATION ROUTE ---
 Route::get('/qr-code/{data}', [QrCodeController::class, 'generate'])->name('qr.generate');
+
+Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::resource('nextspaces', AdminNextspaceController::class);
+});
 
 require __DIR__.'/auth.php';
