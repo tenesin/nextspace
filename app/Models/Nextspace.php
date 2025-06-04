@@ -19,20 +19,21 @@ class Nextspace extends Model
         'hours',
         'rating',
         'reviews_count',
-        'amenities', 
-        'services', 
+        'amenities',
+        'services',
         'time_slots',
         'base_price',
     ];
 
     protected $casts = [
-        'amenities' => 'array', 
-        'services' => 'array', 
+        'amenities' => 'array',
+        'services' => 'array',
+        'hours' => 'array', 
+        'rating' => 'float', 
         'time_slots' => 'array',
         'base_price' => 'decimal:2',
     ];
 
-    // Keep these relationships for fetching names and for admin form pre-selection
     public function amenities(): BelongsToMany
     {
         return $this->belongsToMany(Amenity::class, 'nextspace_amenity');

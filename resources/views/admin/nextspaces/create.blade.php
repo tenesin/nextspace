@@ -48,19 +48,33 @@
                         <x-text-input id="hours" name="hours" type="text" class="mt-1 block w-full" :value="old('hours')" placeholder="e.g., Mon-Fri: 9:00 AM - 5:00 PM" />
                     </div>
 
-                    <div class="mb-4">
-                        <x-input-label for="rating" value="Rating (0.0 to 5.0)" />
-                        <select id="rating" name="rating" class="mt-1 block w-full border-gray-300 focus:border-primary focus:ring-primary rounded-md shadow-sm">
-                            <option value="">Select a rating</option>
-                            @for ($i = 50; $i >= 0; $i--)
-                                @php $ratingValue = $i / 10; @endphp
-                                <option value="{{ $ratingValue }}" {{ old('rating') == $ratingValue ? 'selected' : '' }}>
-                                    {{ number_format($ratingValue, 1) }}
-                                </option>
-                            @endfor
-                        </select>
-                        <p class="text-xs text-gray-500 mt-1">Select a rating from the list.</p>
+                    {{-- Rating Single-Select Dropdown with Pill --}}
+                    <div class="mb-6">
+                        <x-input-label for="rating_dropdown" value="Rating (Select only 1)" />
+                        <div class="relative">
+                            <div class="mt-1 p-2 border border-gray-300 rounded-md shadow-sm bg-white cursor-pointer select-none" id="rating_dropdown_trigger">
+                                <span id="rating_selected_display" class="text-gray-500">Select a rating...</span>
+                                <div class="absolute right-2 top-1/2 -translate-y-1/2">
+                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <div id="rating_dropdown_options" class="absolute z-10 w-full bg-white border border-gray-300 rounded-md shadow-lg mt-1 hidden max-h-48 overflow-y-auto">
+                                @for ($i = 50; $i >= 0; $i--)
+                                    @php $ratingValue = $i / 10; @endphp
+                                    <div class="px-4 py-2 ..." data-value="{{ $ratingValue }}" data-name="{{ number_format($ratingValue, 1) }} ⭐">
+                            {{ number_format($ratingValue, 1) }} ⭐
+                        </div>
+                                @endfor
+                            </div>
+                        </div>
+                        <div id="rating_pills_container" class="mt-2 flex flex-wrap gap-2"></div>
+                        <input type="hidden" name="rating" id="rating_hidden_input"> {{-- Hidden input for form submission --}}
+                        <p class="text-xs text-gray-500 mt-1">Select only one rating from 0.0 to 5.0</p>
                     </div>
+
+
 
                     <div class="mb-4">
                         <x-input-label for="reviews_count" value="Number of Reviews" />
@@ -149,7 +163,7 @@
                     <div class="flex items-center justify-end mt-4">
                         <a href="{{ route('admin.nextspaces.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-gray-800 uppercase tracking-widest hover:bg-gray-300 focus:bg-gray-300 active:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150 mr-2">Cancel</a>
                         <x-primary-button>
-                            Create NextSpace
+                            Create
                         </x-primary-button>
                     </div>
                 </form>
@@ -160,142 +174,93 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Function to initialize and manage custom select dropdowns
         function setupCustomSelect(triggerId, optionsId, pillsContainerId, hiddenInputId, isMultiSelect = true, maxSelection = Infinity) {
             const trigger = document.getElementById(triggerId);
             const optionsContainer = document.getElementById(optionsId);
             const pillsContainer = document.getElementById(pillsContainerId);
             const hiddenInput = document.getElementById(hiddenInputId);
-            let selectedValues = new Set(); // Use Set for efficient add/delete and uniqueness
+            let selectedValues = new Set();
 
-            // Function to update hidden input and pills display
             const updateDisplay = () => {
                 pillsContainer.innerHTML = '';
-                const currentSelectedNames = [];
-                const currentSelectedIds = [];
+                const selectedNames = [];
+                const selectedIds = [];
 
                 selectedValues.forEach(itemJson => {
-                    const item = JSON.parse(itemJson); // Parse back to object
-                    currentSelectedNames.push(item.name);
-                    currentSelectedIds.push(item.value);
+                    const item = JSON.parse(itemJson);
+                    selectedNames.push(item.name);
+                    selectedIds.push(item.id);
 
                     const pill = document.createElement('span');
-                    pill.className = 'inline-flex items-center bg-primary-light text-primary px-3 py-1 rounded-full text-sm font-medium cursor-pointer';
-                    pill.innerHTML = `${item.name} <svg class="w-3 h-3 ml-1.5 text-primary-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24" data-value="${item.value}" data-name="${item.name}"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>`;
-                    pill.querySelector('svg').addEventListener('click', (e) => {
-                        e.stopPropagation(); // Prevent dropdown from re-opening
-                        selectedValues.delete(itemJson);
-                        updateDisplay();
-                        updateOptionState(item.value, false);
-                    });
+                    pill.className = 'inline-flex items-center px-3 py-1 bg-primary text-white rounded-full text-sm';
+                    pill.innerHTML = `${item.name} <span class="ml-2 cursor-pointer text-white hover:text-red-300" data-id="${item.id}">&times;</span>`;
                     pillsContainer.appendChild(pill);
                 });
 
-                // Update the hidden input for form submission
-                if (isMultiSelect) {
-                    hiddenInput.value = JSON.stringify(currentSelectedIds); // Store array of IDs
-                    hiddenInput.name = hiddenInput.id; // Ensure name is correct for array submission
-                } else {
-                    hiddenInput.value = currentSelectedIds.length > 0 ? currentSelectedIds[0] : ''; // Store single ID or empty
-                    hiddenInput.name = hiddenInput.id.replace('[]', ''); // Ensure name is correct for single submission
-                }
-                
-                // Update dropdown trigger text
-                if (currentSelectedNames.length === 0) {
-                    trigger.querySelector('span').textContent = `Select ${triggerId.replace('_dropdown_trigger', '').replace('_', ' ')}...`;
-                    trigger.querySelector('span').classList.add('text-gray-500');
-                } else {
-                    trigger.querySelector('span').textContent = currentSelectedNames.join(', ');
-                    trigger.querySelector('span').classList.remove('text-gray-500');
-                }
+                hiddenInput.value = Array.from(selectedIds);
 
-                // Update original hidden select element's options (if it exists)
-                const originalSelect = document.getElementById(triggerId.replace('_dropdown_trigger', ''));
-                if (originalSelect && originalSelect.tagName === 'SELECT') {
-                    Array.from(originalSelect.options).forEach(option => {
-                        option.selected = currentSelectedIds.includes(parseInt(option.value)) || currentSelectedIds.includes(option.value); // Handle string/int comparison
+                // Update trigger display
+                const display = trigger.querySelector('span');
+                display.textContent = selectedNames.length ? selectedNames.join(', ') : 'Select options...';
+
+                // Re-attach remove handlers
+                pillsContainer.querySelectorAll('[data-id]').forEach(el => {
+                    el.addEventListener('click', () => {
+                        selectedValues.forEach(val => {
+                            if (JSON.parse(val).id == el.dataset.id) {
+                                selectedValues.delete(val);
+                            }
+                        });
+                        updateDisplay();
                     });
-                }
+                });
             };
 
-            // Function to update the visual state of an option in the dropdown
-            const updateOptionState = (value, isSelected) => {
-                const optionDiv = optionsContainer.querySelector(`div[data-value="${value}"]`);
-                if (optionDiv) {
-                    if (isSelected) {
-                        optionDiv.classList.add('bg-primary-light', 'text-primary');
-                        optionDiv.classList.remove('hover:bg-gray-100');
-                    } else {
-                        optionDiv.classList.remove('bg-primary-light', 'text-primary');
-                        optionDiv.classList.add('hover:bg-gray-100');
-                    }
-                }
-            };
-
-            // Toggle dropdown visibility
-            trigger.addEventListener('click', (e) => {
-                e.stopPropagation();
+            // Show/hide dropdown
+            trigger.addEventListener('click', () => {
                 optionsContainer.classList.toggle('hidden');
             });
 
-            // Handle option click
-            optionsContainer.addEventListener('click', (e) => {
-                const optionDiv = e.target.closest('div[data-value]');
-                if (optionDiv) {
-                    const value = optionDiv.dataset.value;
-                    const name = optionDiv.dataset.name;
-                    const itemJson = JSON.stringify({ value: value, name: name });
+            // Select/deselect logic
+            optionsContainer.querySelectorAll('[data-value]').forEach(option => {
+                option.addEventListener('click', () => {
+                    const item = {
+                        id: option.dataset.value,
+                        name: option.dataset.name
+                    };
+                    const itemJson = JSON.stringify(item);
 
-                    if (isMultiSelect) {
-                        if (selectedValues.has(itemJson)) {
-                            selectedValues.delete(itemJson);
-                            updateOptionState(value, false);
-                        } else if (selectedValues.size < maxSelection) {
-                            selectedValues.add(itemJson);
-                            updateOptionState(value, true);
+                    if (selectedValues.has(itemJson)) {
+                        selectedValues.delete(itemJson);
+                    } else {
+                        if (!isMultiSelect) {
+                            selectedValues.clear();
                         }
-                    } else { // Single select
-                        selectedValues.clear();
-                        selectedValues.add(itemJson);
-                        Array.from(optionsContainer.children).forEach(child => {
-                            updateOptionState(child.dataset.value, false);
-                        });
-                        updateOptionState(value, true);
-                        optionsContainer.classList.add('hidden'); // Close dropdown on single select
+                        if (selectedValues.size < maxSelection) {
+                            selectedValues.add(itemJson);
+                        }
                     }
                     updateDisplay();
-                }
+                    optionsContainer.classList.add('hidden');
+                });
             });
 
-            // Close dropdown when clicking outside
+            // Click outside to close dropdown
             document.addEventListener('click', (e) => {
                 if (!trigger.contains(e.target) && !optionsContainer.contains(e.target)) {
                     optionsContainer.classList.add('hidden');
                 }
             });
-
-            // Initialize with old values (for validation errors)
-            const initialOldValues = JSON.parse(hiddenInput.value || '[]');
-            initialOldValues.forEach(val => {
-                const optionDiv = optionsContainer.querySelector(`div[data-value="${val}"]`);
-                if (optionDiv) {
-                    selectedValues.add(JSON.stringify({ value: val, name: optionDiv.dataset.name }));
-                    updateOptionState(val, true);
-                }
-            });
-            updateDisplay();
         }
 
-        // Setup for Amenities
+        // Setup each dropdown
         setupCustomSelect('amenities_dropdown_trigger', 'amenities_dropdown_options', 'amenities_pills_container', 'amenities_hidden_input', true, 5);
-
-        // Setup for Services
         setupCustomSelect('services_dropdown_trigger', 'services_dropdown_options', 'services_pills_container', 'services_hidden_input', true, 5);
-
-        // Setup for Time Slots (single select)
         setupCustomSelect('time_slots_dropdown_trigger', 'time_slots_dropdown_options', 'time_slots_pills_container', 'time_slots_hidden_input', false, 1);
+        setupCustomSelect('rating_dropdown_trigger', 'rating_dropdown_options', 'rating_pills_container', 'rating_hidden_input', false, 1);
     });
 </script>
+
 
 <style>
     /* Hide the original select elements */

@@ -125,11 +125,7 @@
                 </div>
             @endif
 
-            @if($slot ?? false)
-                <div class="mt-4 pt-4 border-t border-gray-100">
-                    {{ $slot }}
-                </div>
-            @endif
+            
 
             <div class="mt-4">
                 <div class="flex items-center justify-between">

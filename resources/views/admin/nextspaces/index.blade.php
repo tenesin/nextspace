@@ -51,8 +51,6 @@
                                         Services: {{ $displayServices }}
                                     </div>
                                 @endif
-                                {{-- Admin edit/delete buttons are now inside x-admin-product-card itself --}}
-                                {{-- So, this div is removed from here --}}
                             </x-admin-product-card>
                         @endforeach
                     </div>
