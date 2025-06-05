@@ -48,7 +48,7 @@
                         <x-text-input id="hours" name="hours" type="text" class="mt-1 block w-full" :value="old('hours')" placeholder="e.g., Mon-Fri: 9:00 AM - 5:00 PM" />
                     </div>
 
-                    {{-- Rating Single-Select Dropdown with Pill --}}
+                    {{-- Rating Single-Select Dropdown --}}
                     <div class="mb-6">
                         <x-input-label for="rating_dropdown" value="Rating (Select only 1)" />
                         <div class="relative">
@@ -63,18 +63,16 @@
                             <div id="rating_dropdown_options" class="absolute z-10 w-full bg-white border border-gray-300 rounded-md shadow-lg mt-1 hidden max-h-48 overflow-y-auto">
                                 @for ($i = 50; $i >= 0; $i--)
                                     @php $ratingValue = $i / 10; @endphp
-                                    <div class="px-4 py-2 ..." data-value="{{ $ratingValue }}" data-name="{{ number_format($ratingValue, 1) }} ⭐">
-                            {{ number_format($ratingValue, 1) }} ⭐
-                        </div>
+                                    <div class="px-4 py-2 hover:bg-gray-100 cursor-pointer text-gray-800" data-value="{{ $ratingValue }}" data-name="{{ number_format($ratingValue, 1) }} ⭐">
+                                        {{ number_format($ratingValue, 1) }} ⭐
+                                    </div>
                                 @endfor
                             </div>
                         </div>
                         <div id="rating_pills_container" class="mt-2 flex flex-wrap gap-2"></div>
-                        <input type="hidden" name="rating" id="rating_hidden_input"> {{-- Hidden input for form submission --}}
+                        <input type="hidden" name="rating" id="rating_hidden_input">
                         <p class="text-xs text-gray-500 mt-1">Select only one rating from 0.0 to 5.0</p>
                     </div>
-
-
 
                     <div class="mb-4">
                         <x-input-label for="reviews_count" value="Number of Reviews" />
@@ -88,7 +86,7 @@
                         <p class="text-xs text-gray-500 mt-1">The main price for this NextSpace (e.g., daily rate).</p>
                     </div>
 
-                    {{-- Amenities Multi-Select Dropdown with Pills --}}
+                    {{-- Amenities --}}
                     <div class="mb-4">
                         <x-input-label for="amenities_select" value="Amenities (Select multiple)" />
                         <div class="relative">
@@ -107,11 +105,11 @@
                             </div>
                         </div>
                         <div id="amenities_pills_container" class="mt-2 flex flex-wrap gap-2"></div>
-                        <input type="hidden" name="amenities[]" id="amenities_hidden_input"> {{-- Hidden input for form submission --}}
+                        <input type="hidden" name="amenities[]" id="amenities_hidden_input">
                         <p class="text-xs text-gray-500 mt-1">Click to select/deselect amenities (max 5).</p>
                     </div>
 
-                    {{-- Services Multi-Select Dropdown with Pills --}}
+                    {{-- Services --}}
                     <div class="mb-4">
                         <x-input-label for="services_select" value="Services Offered (Select multiple)" />
                         <div class="relative">
@@ -130,11 +128,11 @@
                             </div>
                         </div>
                         <div id="services_pills_container" class="mt-2 flex flex-wrap gap-2"></div>
-                        <input type="hidden" name="services[]" id="services_hidden_input"> {{-- Hidden input for form submission --}}
+                        <input type="hidden" name="services[]" id="services_hidden_input">
                         <p class="text-xs text-gray-500 mt-1">Click to select/deselect services (max 5).</p>
                     </div>
 
-                    {{-- Time Slot Single-Select Dropdown with Pill --}}
+                    {{-- Time Slots --}}
                     <div class="mb-6">
                         <x-input-label for="time_slots_select" value="Available Time Slot (Select only 1)" />
                         <div class="relative">
@@ -156,12 +154,13 @@
                             </div>
                         </div>
                         <div id="time_slots_pills_container" class="mt-2 flex flex-wrap gap-2"></div>
-                        <input type="hidden" name="time_slots[]" id="time_slots_hidden_input"> {{-- Hidden input for form submission --}}
+                        <input type="hidden" name="time_slots[]" id="time_slots_hidden_input">
                         <p class="text-xs text-gray-500 mt-1">Select only one available time slot.</p>
                     </div>
 
+                    {{-- Submit --}}
                     <div class="flex items-center justify-end mt-4">
-                        <a href="{{ route('admin.nextspaces.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-gray-800 uppercase tracking-widest hover:bg-gray-300 focus:bg-gray-300 active:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150 mr-2">Cancel</a>
+                        <a href="{{ route('admin.nextspaces.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-gray-800 uppercase tracking-widest hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150 mr-2">Cancel</a>
                         <x-primary-button>
                             Create
                         </x-primary-button>
@@ -171,6 +170,7 @@
         </div>
     </div>
 </x-app-layout>
+
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {

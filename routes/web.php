@@ -2,17 +2,24 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\NextspaceController; // Ensure this is imported
+use App\Http\Controllers\NextspaceController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\QrCodeController;
 use App\Http\Controllers\Admin\NextspaceController as AdminNextspaceController;
+use Illuminate\Support\Facades\Auth; // Import Auth facade
 
 Route::get('/', function () {
+    // Check if user is authenticated
+    if (Auth::check()) {
+        if (Auth::user()->role === 'admin') {
+            return redirect()->route('admin.nextspaces.index');
+        }
+        return redirect()->route('dashboard');
+    }
     return view('welcome');
-});
+})->name('home'); // Give the root route a name for easier reference
 
-// UPDATED: Use NextspaceController@index for the dashboard
 Route::get('/dashboard', [NextspaceController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {

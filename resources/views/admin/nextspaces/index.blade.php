@@ -18,40 +18,17 @@
                 @else
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         @foreach ($nextspaces as $nextspace)
-                            {{-- Changed to x-admin-product-card and added nextspaceId prop --}}
                             <x-admin-product-card
-                                imageUrl="{{ $nextspace->image ?? 'https://placehold.co/400x250/E0F2F7/00B4D8?text=NextSpace+Image' }}"
-                                title="{{ $nextspace->title }}"
-                                addressLine1="{{ $nextspace->address }}"
-                                addressLine2=""
-                                hours="{{ $nextspace->hours ?? 'N/A' }}"
-                                :timeSlots="$nextspace->time_slots ?? []"
-                                :detailUrl="route('nextspaces.show', ['id' => $nextspace->id])"
-                                :nextspaceId="$nextspace->id" {{-- Pass the nextspace ID here --}}
-                            >
-                                @php
-                                    $rawAmenityIds = $nextspace->amenities ?? [];
-                                    $amenityIds = is_string($rawAmenityIds) ? json_decode($rawAmenityIds, true) : $rawAmenityIds;
-                                    $amenityIds = is_array($amenityIds) ? $amenityIds : [];
-                                    $displayAmenities = \App\Models\Amenity::whereIn('id', $amenityIds)->pluck('name')->implode(', ');
+    imageUrl="{{ is_array($nextspace->image) ? '' : ($nextspace->image ?? 'https://placehold.co/400x250/E0F2F7/00B4D8?text=NextSpace+Image') }}"
+    title="{{ is_array($nextspace->title) ? '' : $nextspace->title }}"
+    addressLine1="{{ is_array($nextspace->address) ? '' : $nextspace->address }}"
+    addressLine2=""
+    hours="{{ is_array($nextspace->hours) ? 'N/A' : ($nextspace->hours ?? 'N/A') }}"
+    :timeSlots="$nextspace->time_slots ?? []"
+    :detailUrl="route('nextspaces.show', ['id' => $nextspace->id])"
+    :nextspaceId="$nextspace->id"
+/>
 
-                                    $rawServiceIds = $nextspace->services ?? [];
-                                    $serviceIds = is_string($rawServiceIds) ? json_decode($rawServiceIds, true) : $rawServiceIds;
-                                    $serviceIds = is_array($serviceIds) ? $serviceIds : [];
-                                    $displayServices = \App\Models\Service::whereIn('id', $serviceIds)->pluck('name')->implode(', ');
-                                @endphp
-
-                                @if(!empty($displayAmenities))
-                                    <div class="mt-2 text-sm text-gray-600">
-                                        Amenities: {{ $displayAmenities }}
-                                    </div>
-                                @endif
-                                @if(!empty($displayServices))
-                                    <div class="mt-1 text-sm text-gray-600">
-                                        Services: {{ $displayServices }}
-                                    </div>
-                                @endif
-                            </x-admin-product-card>
                         @endforeach
                     </div>
                 @endif

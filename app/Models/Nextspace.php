@@ -28,8 +28,8 @@ class Nextspace extends Model
     protected $casts = [
         'amenities' => 'array',
         'services' => 'array',
-        'hours' => 'array', 
-        'rating' => 'float', 
+        'hours' => 'array',
+        'rating' => 'float',
         'time_slots' => 'array',
         'base_price' => 'decimal:2',
     ];
@@ -42,5 +42,12 @@ class Nextspace extends Model
     public function services(): BelongsToMany
     {
         return $this->belongsToMany(Service::class, 'nextspace_service');
+    }
+
+    public function timeSlots(): BelongsToMany
+    {
+        // Define the many-to-many relationship for time_slots
+        // Assuming your pivot table is 'nextspace_time_slot'
+        return $this->belongsToMany(TimeSlot::class, 'nextspace_time_slot');
     }
 }

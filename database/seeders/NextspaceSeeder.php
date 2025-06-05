@@ -10,6 +10,6 @@ class NextspaceSeeder extends Seeder
 {
     public function run(): void
     {
-        Nextspace::factory()->count(10)->create(); // No more attaching here
+        Nextspace::factory()->count(12)->create(); // No more attaching here
     }
 }

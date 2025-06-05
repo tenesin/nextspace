@@ -10,7 +10,8 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             AmenitySeeder::class,
-            ServiceSeeder::class, 
+            ServiceSeeder::class,
+            TimeSlotSeeder::class, // Ensure this line is present
             NextspaceSeeder::class,
         ]);
     }

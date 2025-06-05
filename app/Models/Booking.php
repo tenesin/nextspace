@@ -18,17 +18,18 @@ class Booking extends Model
         'nextspace_address',
         'nextspace_image_url',
         'booked_time_slot',
-        'booked_for', 
+        'booked_for',
+        'booking_date',
         'price',
         'status',
-        'booking_date'
-       
+        'selected_services_details', // Add this new column
     ];
 
     protected $casts = [
-        'booked_for' => 'date', 
-        'booking_date' => 'date', 
+        'booked_for' => 'date',
+        'booking_date' => 'date',
         'price' => 'decimal:2',
+        'selected_services_details' => 'array', // Cast to array
     ];
 
     public function user(): BelongsTo

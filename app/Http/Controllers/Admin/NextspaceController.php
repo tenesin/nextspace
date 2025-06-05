@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Nextspace;
 use App\Models\Amenity;
 use App\Models\Service;
+use App\Models\TimeSlot;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 
@@ -13,7 +14,7 @@ class NextspaceController extends Controller
 {
     public function index()
     {
-        $nextspaces = Nextspace::all();
+        $nextspaces = Nextspace::with(['amenities', 'services', 'timeSlots'])->get();
         return view('admin.nextspaces.index', compact('nextspaces'));
     }
 
@@ -21,7 +22,8 @@ class NextspaceController extends Controller
     {
         $amenities = Amenity::all();
         $services = Service::all();
-        return view('admin.nextspaces.create', compact('amenities', 'services'));
+        $timeSlots = TimeSlot::all();
+        return view('admin.nextspaces.create', compact('amenities', 'services', 'timeSlots'));
     }
 
     public function store(Request $request)
@@ -32,43 +34,76 @@ class NextspaceController extends Controller
             'image' => 'nullable|url',
             'address' => 'required|string|max:255',
             'phone' => 'nullable|string|max:20',
-            'hours' => 'nullable|string|max:255',
+            'hours_hidden_input' => 'nullable|json',
             'rating' => 'nullable|numeric|min:0|max:5',
             'reviews_count' => 'nullable|integer|min:0',
             'amenities_hidden_input' => 'nullable|json',
             'services_hidden_input' => 'nullable|json',
-            'time_slots' => 'nullable|json',
+            'time_slots_hidden_input' => 'nullable|json',
             'base_price' => 'nullable|numeric|min:0',
         ]);
 
-        $amenityIds = json_decode($request->input('amenities_hidden_input'), true) ?? [];
-        $serviceIds = json_decode($request->input('services_hidden_input'), true) ?? [];
+        // Parse JSON inputs
+        $amenityIds = $this->parseJsonInput($request->input('amenities_hidden_input'));
+        $serviceIds = $this->parseJsonInput($request->input('services_hidden_input'));
+        $hoursArray = $this->parseJsonInput($request->input('hours_hidden_input'));
+        $timeSlotIds = $this->parseJsonInput($request->input('time_slots_hidden_input'));
 
-        // Prepare data for Nextspace::create, including JSON columns with IDs
-        $nextspaceData = Arr::except($validatedData, ['amenities_hidden_input', 'services_hidden_input']);
-        $nextspaceData['amenities'] = $amenityIds; // Store array of IDs (Eloquent will cast to JSON)
-        $nextspaceData['services'] = $serviceIds; // Store array of IDs (Eloquent will cast to JSON)
+        // Prepare data for creation
+        $nextspaceData = Arr::except($validatedData, [
+            'amenities_hidden_input', 
+            'services_hidden_input', 
+            'hours_hidden_input', 
+            'time_slots_hidden_input'
+        ]);
+        
+        $nextspaceData['amenities'] = $amenityIds;
+        $nextspaceData['services'] = $serviceIds;
+        $nextspaceData['hours'] = $hoursArray;
+        $nextspaceData['time_slots'] = $timeSlotIds;
 
+        // Create nextspace
         $nextspace = Nextspace::create($nextspaceData);
         
-        // Still sync pivot tables for relationships (for admin form pre-selection and consistency)
+        // Sync relationships (for pivot tables if you're using both approaches)
         $nextspace->amenities()->sync($amenityIds);
         $nextspace->services()->sync($serviceIds);
+        $nextspace->timeSlots()->sync($timeSlotIds);
 
-        return redirect()->route('admin.nextspaces.index')->with('success', 'NextSpace created successfully.');
+        return redirect()->route('admin.nextspaces.index')
+            ->with('success', 'NextSpace created successfully.');
+    }
+
+    public function show(Nextspace $nextspace)
+    {
+        $nextspace->load(['amenities', 'services', 'timeSlots']);
+        return view('admin.nextspaces.show', compact('nextspace'));
     }
 
     public function edit(Nextspace $nextspace)
-    {
-        $amenities = Amenity::all();
-        $services = Service::all();
-        
-        // selectedAmenities and selectedServices are already arrays of IDs from the model's casting
-        $selectedAmenities = $nextspace->amenities ?? [];
-        $selectedServices = $nextspace->services ?? [];
+{
+    // Ambil ulang dari database dengan relasi
+    $nextspace = Nextspace::with(['amenities', 'services'])->findOrFail($nextspace->id);
 
-        return view('admin.nextspaces.edit', compact('nextspace', 'amenities', 'services', 'selectedAmenities', 'selectedServices'));
-    }
+    $amenities = Amenity::all();
+    $services = Service::all();
+    $timeSlots = TimeSlot::all();
+    
+    $selectedAmenities = $nextspace->amenities->pluck('id')->toArray();
+    $selectedServices = $nextspace->services->pluck('id')->toArray();
+    $selectedTimeSlots = $this->parseJsonInput($nextspace->time_slots);
+
+    return view('admin.nextspaces.edit', compact(
+        'nextspace', 
+        'amenities', 
+        'services', 
+        'timeSlots', 
+        'selectedAmenities', 
+        'selectedServices', 
+        'selectedTimeSlots'
+    ));
+}
+
 
     public function update(Request $request, Nextspace $nextspace)
     {
@@ -78,35 +113,86 @@ class NextspaceController extends Controller
             'image' => 'nullable|url',
             'address' => 'required|string|max:255',
             'phone' => 'nullable|string|max:20',
-            'hours' => 'nullable|string|max:255',
+            'hours_hidden_input' => 'nullable|json',
             'rating' => 'nullable|numeric|min:0|max:5',
             'reviews_count' => 'nullable|integer|min:0',
             'amenities_hidden_input' => 'nullable|json',
             'services_hidden_input' => 'nullable|json',
-            'time_slots' => 'nullable|json',
+            'time_slots_hidden_input' => 'nullable|json',
             'base_price' => 'nullable|numeric|min:0',
         ]);
         
-        $amenityIds = json_decode($request->input('amenities_hidden_input'), true) ?? [];
-        $serviceIds = json_decode($request->input('services_hidden_input'), true) ?? [];
+        // Parse JSON inputs
+        $amenityIds = $this->parseJsonInput($request->input('amenities_hidden_input'));
+        $serviceIds = $this->parseJsonInput($request->input('services_hidden_input'));
+        $hoursArray = $this->parseJsonInput($request->input('hours_hidden_input'));
+        $timeSlotIds = $this->parseJsonInput($request->input('time_slots_hidden_input'));
 
-        // Prepare data for Nextspace::update, including JSON columns with IDs
-        $nextspaceData = Arr::except($validatedData, ['amenities_hidden_input', 'services_hidden_input']);
-        $nextspaceData['amenities'] = $amenityIds; // Store array of IDs (Eloquent will cast to JSON)
-        $nextspaceData['services'] = $serviceIds; // Store array of IDs (Eloquent will cast to JSON)
+        // Prepare data for update
+        $nextspaceData = Arr::except($validatedData, [
+            'amenities_hidden_input', 
+            'services_hidden_input', 
+            'hours_hidden_input', 
+            'time_slots_hidden_input'
+        ]);
+        
+        $nextspaceData['amenities'] = $amenityIds;
+        $nextspaceData['services'] = $serviceIds;
+        $nextspaceData['hours'] = $hoursArray;
+        $nextspaceData['time_slots'] = $timeSlotIds;
 
+        // Update nextspace
         $nextspace->update($nextspaceData);
 
-        // Still sync pivot tables for relationships
+        // Sync relationships - FIXED: Added missing timeSlots sync and corrected services sync
         $nextspace->amenities()->sync($amenityIds);
-        $nextspace->services()->sync($serviceIds);
+        $nextspace->services()->sync($serviceIds); // FIXED: was syncing timeSlotIds
+        $nextspace->timeSlots()->sync($timeSlotIds); // ADDED: missing timeSlots sync
 
-        return redirect()->route('admin.nextspaces.index')->with('success', 'NextSpace updated successfully.');
+        return redirect()->route('admin.nextspaces.index')
+            ->with('success', 'NextSpace updated successfully.');
     }
 
     public function destroy(Nextspace $nextspace)
     {
+        // Detach relationships before deleting (optional, depends on your foreign key constraints)
+        $nextspace->amenities()->detach();
+        $nextspace->services()->detach();
+        $nextspace->timeSlots()->detach();
+        
         $nextspace->delete();
-        return redirect()->route('admin.nextspaces.index')->with('success', 'NextSpace deleted successfully.');
+        
+        return redirect()->route('admin.nextspaces.index')
+            ->with('success', 'NextSpace deleted successfully.');
+    }
+
+    /**
+     * Helper method to parse JSON input safely
+     */
+    private function parseJsonInput($input)
+    {
+        if (is_null($input) || $input === '') {
+            return [];
+        }
+        
+        if (is_array($input)) {
+            return $input;
+        }
+        
+        $decoded = json_decode($input, true);
+        return is_array($decoded) ? $decoded : [];
+    }
+
+    /**
+     * Get time slot names for display (helper method)
+     */
+    public function getTimeSlotNames(array $timeSlotIds)
+    {
+        if (empty($timeSlotIds)) {
+            return collect();
+        }
+
+        return TimeSlot::whereIn('id', $timeSlotIds)
+            ->pluck('slot', 'id');
     }
 }
