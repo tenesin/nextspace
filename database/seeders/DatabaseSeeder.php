@@ -11,8 +11,11 @@ class DatabaseSeeder extends Seeder
         $this->call([
             AmenitySeeder::class,
             ServiceSeeder::class,
-            TimeSlotSeeder::class, // Ensure this line is present
+            TimeSlotSeeder::class,
             NextspaceSeeder::class,
+            NextspacePivotSeeder::class,
+            NextspaceHourSeeder::class, // <-- Add this line
+
         ]);
     }
 }

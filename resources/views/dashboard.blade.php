@@ -33,16 +33,14 @@
                                         $serviceIds = is_array($serviceIds) ? $serviceIds : [];
                                         $displayServices = \App\Models\Service::whereIn('id', $serviceIds)->pluck('name')->implode(', ');
 
-                                        // Safely get time slot IDs and fetch names for display
-                                        $rawTimeSlotIds = $nextspace->time_slots ?? [];
-                                        $timeSlotIds = is_string($rawTimeSlotIds) ? json_decode($rawTimeSlotIds, true) : $rawTimeSlotIds;
-                                        $timeSlotIds = is_array($timeSlotIds) ? $timeSlotIds : [];
-                                        $displayTimeSlots = \App\Models\TimeSlot::whereIn('id', $timeSlotIds)->pluck('slot')->toArray();
+                                        $displayTimeSlots = $nextspace->timeSlots->pluck('slot')->toArray();
 
                                         // Safely get hours and ensure it's an array for implode
-                                        $rawHours = $nextspace->hours ?? 'N/A';
-                                        $displayHours = is_string($rawHours) ? json_decode($rawHours, true) : $rawHours;
-                                        $displayHours = is_array($displayHours) ? implode(', ', $displayHours) : ($rawHours ?? 'N/A');
+                                        $displayHours = $nextspace->hours && $nextspace->hours->count()
+                                            ? $nextspace->hours->map(function($hour) {
+                                                return "{$hour->day}: {$hour->open_time} - {$hour->close_time}";
+                                            })->implode(', ')
+                                            : 'N/A';
                                     @endphp
                                     <x-product-card
                                         imageUrl="{{ $nextspace->image ?? 'https://placehold.co/400x250/E0F2F7/00B4D8?text=NextSpace+Image' }}"

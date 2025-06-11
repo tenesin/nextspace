@@ -1,3 +1,4 @@
+{{-- filepath: /Users/ishaqyudha/Projects/nextspace/resources/views/nextspaces/show.blade.php --}}
 <x-app-layout>
     <div class="bg-gray-100 min-h-screen">
         {{-- Hero Section with improved overlay --}}
@@ -71,16 +72,13 @@
 
                         {{-- Time Slots Section --}}
                         <div class="lg:max-w-md">
-                            @php
-                                $displayTimeSlots = $displayTimeSlots ?? [];
-                            @endphp
-                            @if(!empty($displayTimeSlots))
+                            @if($nextspace->timeSlots && $nextspace->timeSlots->count())
                                 <div class="bg-gray-50 rounded-lg p-4">
                                     <h3 class="text-sm font-semibold text-gray-700 mb-3">Available Time Slots</h3>
                                     <div class="flex flex-wrap gap-2">
-                                        @foreach ($displayTimeSlots as $slot)
+                                        @foreach ($nextspace->timeSlots as $slot)
                                             <span class="bg-primary text-white px-3 py-1.5 rounded-md text-sm font-medium hover:bg-primary-dark transition-colors cursor-pointer">
-                                                {{ $slot }}
+                                                {{ $slot->slot }}
                                             </span>
                                         @endforeach
                                     </div>
@@ -127,25 +125,38 @@
                                         </div>
                                     @endif
 
-                                    @if($nextspace->hours)
-                                        <div class="flex items-start gap-3">
-                                            <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                </svg>
-                                            </div>
-                                            @php
-                                            $hours = is_string($nextspace->hours) ? json_decode($nextspace->hours, true) : $nextspace->hours;
-                                        @endphp
-
-                                            <div>
-                                                <p class="text-sm text-gray-500">Hours</p>
-                                                <p class="text-gray-700">
-                                                    {{ is_array($hours) ? implode(', ', $hours) : ($hours ?? 'N/A') }}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    @endif
+                                    {{-- Hours Section --}}
+                @if($nextspace->hours && $nextspace->hours->count())
+                    <div class="flex items-start gap-3">
+                        <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500">Hours</p>
+                            <ul class="text-gray-700">
+                                @foreach($nextspace->hours as $hour)
+                                    <li>
+                                        {{ $hour->day }}: {{ $hour->open_time }} - {{ $hour->close_time }}
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+                @else
+                    <div class="flex items-start gap-3">
+                        <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500">Hours</p>
+                            <p class="text-gray-700">N/A</p>
+                        </div>
+                    </div>
+                @endif
                                 </div>
                             </div>
                         </div>
@@ -154,14 +165,7 @@
                         <div class="lg:col-span-2 space-y-8">
                             
                             {{-- Amenities Section --}}
-                            @php
-                                $amenityIds = $nextspace->amenities ?? [];
-                                $rawAmenityIds = is_string($amenityIds) ? json_decode($amenityIds, true) : $amenityIds;
-                                $amenityIds = is_array($rawAmenityIds) ? $rawAmenityIds : [];
-                                $displayAmenities = \App\Models\Amenity::whereIn('id', $amenityIds)->get();
-                            @endphp
-                            
-                            @if(!$displayAmenities->isEmpty())
+                            @if($nextspace->amenities && $nextspace->amenities->count())
                                 <div>
                                     <h3 class="text-xl font-semibold text-gray-900 mb-4 flex items-center">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -170,7 +174,7 @@
                                         Amenities
                                     </h3>
                                     <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-                                        @foreach ($displayAmenities as $amenity)
+                                        @foreach ($nextspace->amenities as $amenity)
                                             <div class="flex items-center gap-2 bg-white border border-gray-200 rounded-lg p-3 hover:border-primary/30 transition-colors">
                                                 <div class="w-2 h-2 bg-primary rounded-full flex-shrink-0"></div>
                                                 <span class="text-gray-700 text-sm font-medium">{{ $amenity->name }}</span>
@@ -181,14 +185,7 @@
                             @endif
 
                             {{-- Services Section --}}
-                            @php
-                                $serviceIds = $nextspace->services ?? [];
-                                $rawServiceIds = is_string($serviceIds) ? json_decode($serviceIds, true) : $serviceIds;
-                                $serviceIds = is_array($rawServiceIds) ? $rawServiceIds : [];
-                                $displayServices = \App\Models\Service::whereIn('id', $serviceIds)->get();
-                            @endphp
-                            
-                            @if(!$displayServices->isEmpty())
+                            @if($nextspace->services && $nextspace->services->count())
                                 <div>
                                     <h3 class="text-xl font-semibold text-gray-900 mb-4 flex items-center">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -197,7 +194,7 @@
                                         Services Offered
                                     </h3>
                                     <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
-                                        @foreach ($displayServices as $index => $serviceItem)
+                                        @foreach ($nextspace->services as $index => $serviceItem)
                                             <div class="flex justify-between items-center p-4 {{ $index > 0 ? 'border-t border-gray-100' : '' }} hover:bg-gray-50 transition-colors">
                                                 <span class="text-gray-700 font-medium">{{ $serviceItem->name }}</span>
                                                 <span class="text-primary font-semibold text-lg">${{ number_format($serviceItem->price ?? 0, 2) }}</span>

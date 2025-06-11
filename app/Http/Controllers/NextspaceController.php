@@ -15,16 +15,8 @@ class NextspaceController extends Controller
     }
 
     public function show($id)
-    {
-        $nextspace = Nextspace::findOrFail($id);
-
-        // Ensure time_slots is an array and fetch names for display
-        $rawTimeSlotIds = $nextspace->time_slots ?? [];
-        $timeSlotIds = is_string($rawTimeSlotIds) ? json_decode($rawTimeSlotIds, true) : $rawTimeSlotIds;
-        $timeSlotIds = is_array($timeSlotIds) ? $timeSlotIds : [];
-        $displayTimeSlots = TimeSlot::whereIn('id', $timeSlotIds)->pluck('slot')->toArray();
-
-
-        return view('nextspaces.show', compact('nextspace', 'id', 'displayTimeSlots'));
-    }
+{
+    $nextspace = Nextspace::with(['amenities', 'services', 'timeSlots'])->findOrFail($id);
+    return view('nextspaces.show', compact('nextspace'));
+}
 }

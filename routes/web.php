@@ -7,6 +7,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\QrCodeController;
 use App\Http\Controllers\Admin\NextspaceController as AdminNextspaceController;
+use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Auth; // Import Auth facade
 
 Route::get('/', function () {
@@ -18,7 +19,17 @@ Route::get('/', function () {
         return redirect()->route('dashboard');
     }
     return view('welcome');
-})->name('home'); // Give the root route a name for easier reference
+})->name('home'); 
+
+
+Route::get('/register', [\App\Http\Controllers\Auth\RegisteredUserController::class, 'create'])
+    ->middleware('guest')
+    ->name('register');
+Route::post('/register', [\App\Http\Controllers\Auth\RegisteredUserController::class, 'store'])
+    ->middleware('guest')
+    ->name('register.store');
+
+
 
 Route::get('/dashboard', [NextspaceController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 

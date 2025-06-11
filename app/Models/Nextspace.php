@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use App\Models\NextspaceHour;
 
 class Nextspace extends Model
 {
@@ -16,21 +17,13 @@ class Nextspace extends Model
         'image',
         'address',
         'phone',
-        'hours',
         'rating',
         'reviews_count',
-        'amenities',
-        'services',
-        'time_slots',
         'base_price',
     ];
 
     protected $casts = [
-        'amenities' => 'array',
-        'services' => 'array',
-        'hours' => 'array',
         'rating' => 'float',
-        'time_slots' => 'array',
         'base_price' => 'decimal:2',
     ];
 
@@ -46,8 +39,11 @@ class Nextspace extends Model
 
     public function timeSlots(): BelongsToMany
     {
-        // Define the many-to-many relationship for time_slots
-        // Assuming your pivot table is 'nextspace_time_slot'
         return $this->belongsToMany(TimeSlot::class, 'nextspace_time_slot');
+    }
+    
+    public function hours()
+    {
+        return $this->hasMany(NextspaceHour::class, 'nextspace_id');
     }
 }
