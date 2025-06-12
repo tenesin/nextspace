@@ -7,7 +7,6 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\QrCodeController;
 use App\Http\Controllers\Admin\NextspaceController as AdminNextspaceController;
-use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Auth; // Import Auth facade
 
 Route::get('/', function () {

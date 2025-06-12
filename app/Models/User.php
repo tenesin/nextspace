@@ -26,10 +26,7 @@ class User extends Authenticatable
     ];
 
     // This method is correctly defined
-    public function bookings(): HasMany
-    {
-        return $this->hasMany(Booking::class);
-    }
+    
 
     /**
      * The attributes that should be hidden for serialization.
@@ -57,4 +54,10 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+        public function bookings()
+    {
+        return $this->hasMany(Booking::class);
+    }
+        
 }

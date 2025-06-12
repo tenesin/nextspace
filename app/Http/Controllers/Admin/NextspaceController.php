@@ -15,18 +15,23 @@ class NextspaceController extends Controller
 {
     public function index()
     {
+        $users = User::withCount('bookings')->get();
         $nextspaces = Nextspace::all();
-    $users = User::all();
-    return view('admin.nextspaces.index', compact('nextspaces', 'users'));
+
+        // Count users who have at least one booking/order
+        $usersWithOrders = User::whereHas('bookings')->count();
+        // If your model is Order, use 'orders' instead of 'bookings'
+
+        return view('admin.nextspaces.index', compact('users', 'nextspaces', 'usersWithOrders'));
     }
 
     public function create()
-{
-    $amenities = Amenity::all();
-    $services = Service::all();
-    $timeSlots = TimeSlot::all();
-    return view('admin.nextspaces.create', compact('amenities', 'services', 'timeSlots'));
-}
+    {
+        $amenities = Amenity::all();
+        $services = Service::all();
+        $timeSlots = TimeSlot::all();
+        return view('admin.nextspaces.create', compact('amenities', 'services', 'timeSlots'));
+    }
 
     public function store(Request $request)
     {

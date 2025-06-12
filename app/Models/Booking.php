@@ -36,4 +36,9 @@ class Booking extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function bookings() // or orders()
+    {
+        return $this->hasMany(Booking::class); // or Order::class
+    }
 }
