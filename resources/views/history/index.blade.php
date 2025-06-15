@@ -215,6 +215,21 @@
                                                     </svg>
                                                     Details
                                                 </a>
+
+                                                @if(in_array(strtolower($booking->status), ['cancelled', 'canceled', 'checked in']))
+    <form method="POST" action="{{ route('history.remove', $booking->id) }}" class="mt-2">
+        @csrf
+        @method('DELETE')
+        <button type="submit"
+            onclick="return confirm('Are you sure you want to remove this booking from your history?');"
+            class="inline-flex items-center justify-center bg-red-100 text-red-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-200 transition-colors w-full">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+            Remove
+        </button>
+    </form>
+@endif
                                                 
                                                 @if(strtolower($booking->status) === 'confirmed')
                                                     <button class="inline-flex items-center justify-center bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors">

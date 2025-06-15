@@ -27,66 +27,65 @@ class PaymentController extends Controller
     }
 
     public function processPayment(Request $request)
-    {
-        $request->validate([
-            'nextspace_id' => 'required|integer',
-            'booking_date' => 'required|date|after_or_equal:today',
-            'selected_time_slot_id' => 'required|integer|exists:time_slots,id',
-            'selected_service_ids' => 'nullable|array', // New validation for selected services (array of IDs)
-            'selected_service_ids.*' => 'exists:services,id', // Ensure each selected service ID exists
-            'card_number' => 'required|string',
-            'expiry_date' => 'required|string',
-            'cvc' => 'required|string',
+{
+    $request->validate([
+        'nextspace_id' => 'required|integer',
+        'booking_date' => 'required|date|after_or_equal:today',
+        'selected_time_slot_id' => 'required|integer|exists:time_slots,id',
+        'selected_service_ids' => 'nullable|array',
+        'selected_service_ids.*' => 'exists:services,id',
+        'payment_method' => 'required|string',
+        'card_number' => 'required|string',
+        'expiry_date' => 'required|string',
+        'cvc' => 'required|string',
+    ]);
+
+    $nextspace_id = $request->input('nextspace_id');
+    $selected_time_slot_id = $request->input('selected_time_slot_id');
+    $selected_service_ids = $request->input('selected_service_ids') ?? [];
+    $payment_method = $request->input('payment_method');
+
+    $nextspace = Nextspace::findOrFail($nextspace_id);
+    $selectedTimeSlot = TimeSlot::findOrFail($selected_time_slot_id);
+    $selectedServices = Service::whereIn('id', $selected_service_ids)->get();
+
+    $totalPrice = $nextspace->base_price;
+    foreach ($selectedServices as $service) {
+        $totalPrice += $service->price;
+    }
+
+    $booking_id = uniqid('NSB_');
+    $bookedServicesDetails = $selectedServices->map(function($service) {
+        return ['name' => $service->name, 'price' => $service->price];
+    })->toArray();
+
+    // Set status based on payment method
+    $status = ($payment_method === 'cash') ? 'pending' : 'confirmed';
+
+    // Simulate payment success for non-cash methods
+    $paymentSuccessful = ($payment_method === 'cash') ? true : true; // Adjust if you have real payment logic
+
+    if ($paymentSuccessful) {
+        Booking::create([
+            'user_id' => Auth::id(),
+            'nextspace_id' => $nextspace->id,
+            'booking_id' => $booking_id,
+            'nextspace_title' => $nextspace->title,
+            'nextspace_address' => $nextspace->address,
+            'nextspace_image_url' => $nextspace->image,
+            'booked_time_slot' => $selectedTimeSlot->slot,
+            'booked_for' => $request->input('booking_date'),
+            'booking_date' => now()->toDateString(),
+            'price' => $totalPrice,
+            'status' => $status,
+            'selected_services_details' => json_encode($bookedServicesDetails),
         ]);
 
-        $nextspace_id = $request->input('nextspace_id');
-        $selected_time_slot_id = $request->input('selected_time_slot_id');
-        $selected_service_ids = $request->input('selected_service_ids') ?? []; // Get selected service IDs
-
-        $nextspace = Nextspace::findOrFail($nextspace_id);
-        $selectedTimeSlot = TimeSlot::findOrFail($selected_time_slot_id);
-
-        // Fetch selected service models to get their names and prices
-        $selectedServices = Service::whereIn('id', $selected_service_ids)->get();
-
-        // Calculate total price (example: base_price + sum of selected service prices)
-        $totalPrice = $nextspace->base_price;
-        foreach ($selectedServices as $service) {
-            $totalPrice += $service->price;
-        }
-
-        $paymentSuccessful = true;
-
-        if ($paymentSuccessful) {
-            $booking_id = uniqid('NSB_');
-
-            // Prepare selected service names/prices for storage (e.g., as JSON)
-            $bookedServicesDetails = $selectedServices->map(function($service) {
-                return ['name' => $service->name, 'price' => $service->price];
-            })->toArray();
-
-
-            Booking::create([
-                'user_id' => Auth::id(),
-                'nextspace_id' => $nextspace->id,
-                'booking_id' => $booking_id,
-                'nextspace_title' => $nextspace->title,
-                'nextspace_address' => $nextspace->address,
-                'nextspace_image_url' => $nextspace->image,
-                'booked_time_slot' => $selectedTimeSlot->slot,
-                'booked_for' => $request->input('booking_date'),
-                'booking_date' => now()->toDateString(),
-                'price' => $totalPrice, // Save calculated total price
-                'status' => 'confirmed',
-                // Add a new column to bookings table for selected services details
-                'selected_services_details' => json_encode($bookedServicesDetails),
-            ]);
-
-            return redirect()->route('history.index')->with('status', 'Payment confirmed! Your booking has been saved.');
-        } else {
-            return redirect()->back()->withErrors(['payment' => 'Payment failed. Please try again.']);
-        }
+        return redirect()->route('history.index')->with('status', 'Booking berhasil! Silakan lakukan pembayaran di tempat jika memilih Bayar di Tempat.');
+    } else {
+        return redirect()->back()->withErrors(['payment' => 'Payment failed. Please try again.']);
     }
+}
 
     public function success()
     {

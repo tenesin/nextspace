@@ -1,6 +1,6 @@
 {{-- filepath: resources/views/admin/nextspaces/index.blade.php --}}
 <x-app-layout>
-    <div class="py-8 bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+    <div class="py-8 bg-gray-100 min-h-screen">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             {{-- Header Section --}}
             <div class="bg-white overflow-hidden shadow-lg sm:rounded-xl p-8 mb-8">

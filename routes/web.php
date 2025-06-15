@@ -38,13 +38,19 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::post('/booking/{booking}/checkin', [HistoryController::class, 'checkIn'])->name('booking.checkin');
+Route::delete('/booking/{booking}/cancel', [HistoryController::class, 'cancel'])->name('booking.cancel');
+
 Route::get('/nextspaces/{id}', [NextspaceController::class, 'show'])->name('nextspaces.show');
 
 Route::get('/payment/{nextspace_id}', [PaymentController::class, 'showPaymentForm'])->name('payment.form');
 Route::post('/payment/process', [PaymentController::class, 'processPayment'])->name('payment.process');
 
+Route::get('/payment/penalty/{booking}', [PaymentController::class, 'penalty'])->name('payment.penalty');
+
 Route::get('/history', [HistoryController::class, 'index'])->middleware('auth')->name('history.index');
 Route::get('/history/{booking_id}', [HistoryController::class, 'showBookingDetails'])->name('history.show');
+Route::delete('/history/remove/{booking}', [HistoryController::class, 'remove'])->name('history.remove');
 
 Route::get('/qr-code/{data}', [QrCodeController::class, 'generate'])->name('qr.generate');
 

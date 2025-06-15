@@ -23,11 +23,81 @@ class HistoryController extends Controller
     }
 
     public function showBookingDetails($booking_id)
-    {
-        $booking = Booking::where('booking_id', $booking_id)
-                          ->where('user_id', Auth::id())
-                          ->firstOrFail();
+{
+    $booking = Booking::where('booking_id', $booking_id)
+                      ->where('user_id', Auth::id())
+                      ->firstOrFail();
 
-        return view('history.booking-details', compact('booking'));
+    // Penalty logic
+    $now = now();
+    $bookedDateTime = $booking->booked_for ? $booking->booked_for->copy() : null;
+    if ($bookedDateTime && $booking->booked_time_slot) {
+        try {
+            $bookedDateTime->setTimeFromTimeString($booking->booked_time_slot);
+        } catch (\Exception $ex) {}
     }
+    $penalty = false;
+    if ($bookedDateTime) {
+        $diff = $bookedDateTime->diffInMinutes($now, false);
+        $penalty = $diff > -60;
+    }
+
+    return view('history.booking-details', compact('booking', 'penalty'));
+}
+
+    public function checkIn(Booking $booking)
+{
+    if ($booking->user_id !== Auth::id()) {
+        abort(403);
+    }
+    if (!in_array(strtolower($booking->status), ['confirmed', 'paid'])) {
+        return back()->with('error', 'You can only check in for confirmed bookings.');
+    }
+    $booking->status = 'Checked In';
+    $booking->save();
+
+    return back()->with('success', 'Success check in!');
+}
+
+public function cancel(Booking $booking)
+{
+    if ($booking->user_id !== Auth::id()) {
+        abort(403);
+    }
+
+    $now = now();
+    $bookedDateTime = $booking->booked_for->copy();
+    if ($booking->booked_time_slot) {
+        $bookedDateTime->setTimeFromTimeString($booking->booked_time_slot);
+    }
+
+    $penalty = false;
+    $penaltyAmount = 0;
+    if ($bookedDateTime->diffInMinutes($now, false) > -60) {
+        $penalty = true;
+        $penaltyAmount = $booking->price * 0.25;
+        // Optionally, store penalty in DB
+    }
+
+    $booking->status = $penalty ? 'Canceled (Late)' : 'Canceled';
+    $booking->save();
+
+    // Redirect to confirmation page
+    return view('history.cancel-confirmation', [
+        'booking' => $booking,
+        'penalty' => $penalty,
+        'penaltyAmount' => $penaltyAmount,
+    ]);
+}
+
+public function remove(Booking $booking)
+{
+    if ($booking->user_id !== Auth::id()) {
+        abort(403);
+    }
+    // You can use soft delete if your Booking model uses SoftDeletes
+    $booking->delete();
+
+    return back()->with('status', 'Booking removed from your history.');
+}
 }
