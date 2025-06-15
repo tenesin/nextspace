@@ -32,9 +32,11 @@
                     {{-- Space Info Card --}}
                     <div class="bg-gray-100 rounded-lg p-4 mb-6">
                         <div class="flex items-center space-x-3">
-                            <img src="{{ $nextspace->image ?? 'https://placehold.co/60x60/E5E7EB/6B7280?text=Ruang' }}" 
-                                 alt="{{ $nextspace->title }}" 
-                                 class="w-15 h-15 object-cover rounded">
+<img 
+    src="{{ $nextspace->image ?? 'https://placehold.co/120x120/E5E7EB/6B7280?text=Ruang' }}" 
+    alt="{{ $nextspace->title }}" 
+    class="w-28 h-28 object-cover rounded-lg border border-gray-200 shadow-sm"
+/>
                             <div class="flex-1">
                                 <h3 class="font-semibold text-gray-900">{{ $nextspace->title }}</h3>
                                 <p class="text-sm text-gray-600">📍 {{ $nextspace->address }}</p>

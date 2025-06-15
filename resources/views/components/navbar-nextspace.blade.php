@@ -5,7 +5,6 @@
             <a href="{{ route('dashboard') }}" class="text-xl font-bold text-text-primary flex items-center">
                 <span class="text-primary">Next</span><span class="font-semibold text-text-primary">Space</span>
             </a>
-            {{-- Removed: <span class="ml-4 text-sm text-gray-500 hidden md:block">Welcome to TableBooky</span> --}}
         </div>
 
         {{-- Mobile Menu Button (Hamburger) --}}
@@ -21,7 +20,10 @@
         <nav class="hidden md:flex items-center space-x-6">
             <a href="{{ route('dashboard') }}" class="text-text-secondary hover:text-primary transition-colors font-medium">Home</a>
             <a href="{{ route('history.index') }}" class="text-text-secondary hover:text-primary transition-colors font-medium">My Bookings</a>
-
+            <a href="{{ route('favorites.index') }}" class="text-yellow-600 hover:text-yellow-500 transition-colors font-medium flex items-center">
+                
+                My Favorites
+            </a>
             @auth
                 @if (Auth::user()->role === 'admin')
                     <a href="{{ route('admin.nextspaces.index') }}" class="text-primary hover:underline transition-colors font-medium">Admin Page</a>
@@ -47,7 +49,10 @@
         <nav class="flex flex-col space-y-2">
             <a href="{{ route('dashboard') }}" class="block px-3 py-2 rounded-md text-base font-medium text-text-secondary hover:bg-gray-100 hover:text-primary transition-colors">Home</a>
             <a href="{{ route('history.index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-text-secondary hover:bg-gray-100 hover:text-primary transition-colors">My Bookings</a>
-
+            <a href="{{ route('favorites.index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-yellow-600 hover:bg-gray-100 hover:text-yellow-500 transition-colors  items-center">
+               
+                My Favorites
+            </a>
             @auth
                 @if (Auth::user()->role === 'admin')
                     <a href="{{ route('admin.nextspaces.index') }}" class="block px-3 py-2 rounded-md text-base font-medium text-primary hover:bg-gray-100 hover:underline transition-colors">Admin Page</a>

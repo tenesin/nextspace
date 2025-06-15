@@ -8,6 +8,8 @@ use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\QrCodeController;
 use App\Http\Controllers\Admin\NextspaceController as AdminNextspaceController;
 use Illuminate\Support\Facades\Auth; // Import Auth facade
+use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\FavoriteController;
 
 Route::get('/', function () {
     // Check if user is authenticated
@@ -18,7 +20,7 @@ Route::get('/', function () {
         return redirect()->route('dashboard');
     }
     return view('welcome');
-})->name('home'); 
+})->name('home');
 
 
 Route::get('/register', [\App\Http\Controllers\Auth\RegisteredUserController::class, 'create'])
@@ -55,7 +57,22 @@ Route::delete('/history/remove/{booking}', [HistoryController::class, 'remove'])
 Route::get('/qr-code/{data}', [QrCodeController::class, 'generate'])->name('qr.generate');
 
 Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(function () {
+    // IMPORTANT: Place specific routes like 'export-report' BEFORE resource routes.
+    Route::get('nextspaces/export-report', [AdminNextspaceController::class, 'exportReport'])->name('nextspaces.export-report');
     Route::resource('nextspaces', AdminNextspaceController::class);
 });
+
+// Reviews
+Route::post('/reviews/{booking}', [ReviewController::class, 'store'])->name('reviews.store');
+
+// Penalty Payment
+// Note: You have this route defined twice. Keep only one.
+Route::get('/payment/penalty/{booking}', [PaymentController::class, 'penalty'])->name('payment.penalty');
+Route::post('/payment/penalty/{booking}', [PaymentController::class, 'payPenalty'])->name('payment.penalty.pay');
+
+// Favorites
+Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
+Route::post('/favorites/toggle/{nextspace}', [FavoriteController::class, 'toggle'])->name('favorites.toggle');
+
 
 require __DIR__.'/auth.php';

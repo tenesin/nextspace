@@ -1,22 +1,44 @@
 <?php
 
 namespace App\Http\Controllers;
+use Illuminate\Support\Facades\Auth;
+
 
 use Illuminate\Http\Request;
 use App\Models\Nextspace;
-use App\Models\TimeSlot; // Import TimeSlot model
+use App\Models\TimeSlot;
+use App\Models\Favorite;
 
 class NextspaceController extends Controller
 {
+    /**
+     * Display a listing of the nextspaces.
+     */
     public function index()
     {
-        $nextspaces = NextSpace::latest()->paginate(4); // 6 item per halaman, bisa kamu sesuaikan
-        return view('/dashboard', compact('nextspaces'));
+        // Mengambil data Nextspace terbaru, 4 per halaman
+        $nextspaces = Nextspace::latest()->paginate(4);
+
+        return view('dashboard', compact('nextspaces'));
     }
 
+    /**
+     * Display the specified Nextspace with details.
+     */
     public function show($id)
-{
-    $nextspace = Nextspace::with(['amenities', 'services', 'timeSlots'])->findOrFail($id);
-    return view('nextspaces.show', compact('nextspace'));
+    {
+        // Ambil nextspace beserta relasinya
+        $nextspace = Nextspace::with(['amenities', 'services', 'timeSlots'])->findOrFail($id);
+
+        // Cek apakah nextspace ini sudah difavoritkan oleh user yang sedang login
+        $isFavorited = false;
+if (Auth::check()) {
+    $isFavorited = Favorite::where('user_id', Auth::id())
+        ->where('nextspace_id', $nextspace->id)
+        ->exists();
 }
+
+
+        return view('nextspaces.show', compact('nextspace', 'isFavorited'));
+    }
 }

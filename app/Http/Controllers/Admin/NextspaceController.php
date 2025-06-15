@@ -10,6 +10,8 @@ use App\Models\TimeSlot;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use App\Models\User;
+use App\Exports\NextspacesExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class NextspaceController extends Controller
 {
@@ -167,4 +169,8 @@ $nextspace->timeSlots()->sync($request->input('time_slot_ids', []));
         return TimeSlot::whereIn('id', $timeSlotIds)
             ->pluck('slot', 'id');
     }
+
+  public function exportReport()
+{
+return Excel::download(new NextspacesExport, 'nextspaces_business_report.xlsx');}
 }

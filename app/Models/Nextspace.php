@@ -7,6 +7,22 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use App\Models\NextspaceHour;
 
+/**
+ * Class Nextspace
+ * @package App\Models
+ * @property int $id
+ * @property string $title
+ * @property string $description
+ * @property string $image
+ * @property string $address
+ * @property string $phone
+ * @property float $rating
+ * @property int $reviews_count
+ * @property float $base_price
+ * @property array|string|null $time_slots
+
+ */
+
 class Nextspace extends Model
 {
     use HasFactory;
