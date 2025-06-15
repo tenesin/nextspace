@@ -1,149 +1,120 @@
 {{-- filepath: resources/views/admin/nextspaces/index.blade.php --}}
 <x-app-layout>
-    <div class="py-8 bg-gray-100 min-h-screen">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="py-6 bg-gray-50 min-h-screen">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
             {{-- Header Section --}}
-            <div class="bg-white overflow-hidden shadow-lg sm:rounded-xl p-8 mb-8">
+            <div class="bg-white shadow-sm rounded-lg p-6 mb-6">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div>
-                        <h1 class="text-3xl font-bold text-gray-900 mb-2">NextSpaces Management</h1>
-                        <p class="text-gray-600">Manage your spaces and monitor user activity</p>
+                        <h1 class="text-2xl font-semibold text-gray-900 mb-1">NextSpaces Management</h1>
+                        <p class="text-gray-600 text-sm">Manage your spaces and monitor user activity</p>
                     </div>
-                    
+                    <div class="flex gap-2">
+                        <a href="{{ route('admin.nextspaces.export-report') }}"
+                           class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition-colors">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"/>
+                            </svg>
+                            Export Report
+                        </a>
+                        <a href="{{ route('admin.nextspaces.create') }}" 
+                           class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition-colors">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                            </svg>
+                            Create Space
+                        </a>
+                    </div>
                 </div>
             </div>
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-    <div>
-        <h1 class="text-3xl font-bold text-gray-900 mb-2">NextSpaces Management</h1>
-        <p class="text-gray-600">Manage your spaces and monitor user activity</p>
-    </div>
-    <div class="flex gap-3">
-        <a href="{{ route('admin.nextspaces.export-report') }}"
-   class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-500 to-green-700 text-white font-semibold rounded-lg hover:from-green-600 hover:to-green-800 transform hover:scale-105 transition-all duration-200 shadow-lg">
-    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-    </svg>
-    Export Business Report (Excel)
-</a>
-        <a href="{{ route('admin.nextspaces.create') }}" 
-           class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-indigo-700 transform hover:scale-105 transition-all duration-200 shadow-lg">
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-            </svg>
-            Create New NextSpace
-        </a>
-    </div>
-</div>
 
             {{-- Statistics Cards --}}
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div class="bg-white rounded-xl shadow-md p-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div class="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
                     <div class="flex items-center">
-                        <div class="p-3 rounded-full bg-blue-100 text-blue-600 mr-4">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="p-2 rounded-md bg-blue-50 text-blue-600 mr-3">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
                             </svg>
                         </div>
                         <div>
-                            <p class="text-2xl font-bold text-gray-900">{{ $users->count() }}</p>
-                            <p class="text-gray-600">Registered Users</p>
+                            <p class="text-xl font-semibold text-gray-900">{{ $users->count() }}</p>
+                            <p class="text-gray-600 text-sm">Users</p>
                         </div>
                     </div>
                 </div>
                 
-                <div class="bg-white rounded-xl shadow-md p-6">
+                <div class="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
                     <div class="flex items-center">
-                        <div class="p-3 rounded-full bg-green-100 text-green-600 mr-4">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="p-2 rounded-md bg-blue-50 text-blue-600 mr-3">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                             </svg>
                         </div>
                         <div>
-                            <p class="text-2xl font-bold text-gray-900">{{ $nextspaces->count() }}</p>
-                            <p class="text-gray-600">Active Spaces</p>
+                            <p class="text-xl font-semibold text-gray-900">{{ $nextspaces->count() }}</p>
+                            <p class="text-gray-600 text-sm">Spaces</p>
                         </div>
                     </div>
                 </div>
                 
-                <div class="bg-white rounded-xl shadow-md p-6">
+                <div class="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
                     <div class="flex items-center">
-                        <div class="p-3 rounded-full bg-purple-100 text-purple-600 mr-4">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="p-2 rounded-md bg-blue-50 text-blue-600 mr-3">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
                             </svg>
                         </div>
                         <div>
-                            <p class="text-2xl font-bold text-gray-900">${{ number_format($nextspaces->sum('base_price'), 2) }}</p>
-                            <p class="text-gray-600">Total Value</p>
+                            <p class="text-xl font-semibold text-gray-900">${{ number_format($nextspaces->sum('base_price'), 2) }}</p>
+                            <p class="text-gray-600 text-sm">Total Value</p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            
-
-            {{-- Users Management Section --}}
-            <div class="bg-white rounded-xl shadow-lg p-8 mb-8">
-                <div class="flex items-center mb-6">
-                    <div class="p-2 bg-blue-100 rounded-lg mr-3">
-                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
-                        </svg>
-                    </div>
-                    <h2 class="text-2xl font-bold text-gray-900">Registered Users</h2>
+            {{-- Users Section --}}
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h2 class="text-lg font-medium text-gray-900">Registered Users</h2>
                 </div>
 
                 @if ($users->isEmpty())
-                    <div class="text-center py-12">
-                        <div class="mx-auto h-24 w-24 text-gray-400 mb-4">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                            </svg>
-                        </div>
-                        <h3 class="text-lg font-medium text-gray-900 mb-2">No users registered yet</h3>
-                        <p class="text-gray-500">Users will appear here once they register for your platform.</p>
+                    <div class="text-center py-8">
+                        <svg class="mx-auto h-12 w-12 text-gray-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                        </svg>
+                        <p class="text-gray-500 text-sm">No users registered yet</p>
                     </div>
                 @else
-                    <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-lg">
+                    <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Joined</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bookings</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">User</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Joined</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Bookings</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
                                 @foreach ($users as $user)
-                                    <tr class="hover:bg-gray-50 transition-colors duration-150">
-                                        <td class="px-6 py-4 whitespace-nowrap">
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="px-6 py-3 whitespace-nowrap">
                                             <div class="flex items-center">
-                                                <div class="flex-shrink-0 h-10 w-10">
-                                                    <div class="h-10 w-10 rounded-full bg-gradient-to-r from-blue-400 to-purple-500 flex items-center justify-center text-white font-medium">
-                                                        {{ strtoupper(substr($user->name, 0, 1)) }}
-                                                    </div>
+                                                <div class="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs font-medium mr-3">
+                                                    {{ strtoupper(substr($user->name, 0, 1)) }}
                                                 </div>
-                                                <div class="ml-4">
-                                                    <div class="text-sm font-medium text-gray-900">{{ $user->name }}</div>
-                                                </div>
+                                                <span class="text-sm font-medium text-gray-900">{{ $user->name }}</span>
                                             </div>
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="text-sm text-gray-900">{{ $user->email }}</div>
+                                        <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-600">{{ $user->email }}</td>
+                                        <td class="px-6 py-3 whitespace-nowrap text-sm text-gray-600">
+                                            {{ $user->created_at->format('M j, Y') }}
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="text-sm text-gray-900">{{ $user->created_at->format('M j, Y') }}</div>
-                                            <div class="text-sm text-gray-500">{{ $user->created_at->diffForHumans() }}</div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                                                Active
-                                            </span>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                                        <td class="px-6 py-3 whitespace-nowrap">
+                                            <span class="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
                                                 {{ $user->bookings_count }}
                                             </span>
                                         </td>
@@ -155,93 +126,94 @@
                 @endif
             </div>
 
-            {{-- NextSpaces Management Section --}}
-            <div class="bg-white rounded-xl shadow-lg p-8">
-                <div class="flex items-center mb-6">
-                    <div class="p-2 bg-green-100 rounded-lg mr-3">
-                        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                        </svg>
-                    </div>
-                    <h2 class="text-2xl font-bold text-gray-900">Your NextSpaces</h2>
+            {{-- NextSpaces Section --}}
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h2 class="text-lg font-medium text-gray-900">Your NextSpaces</h2>
                 </div>
 
                 @if ($nextspaces->isEmpty())
-                    <div class="text-center py-16">
-                        <div class="mx-auto h-24 w-24 text-gray-400 mb-6">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                            </svg>
-                        </div>
-                        <h3 class="text-xl font-semibold text-gray-900 mb-2">No NextSpaces yet</h3>
-                        <p class="text-gray-500 mb-6">Create your first NextSpace to get started with your platform.</p>
+                    <div class="text-center py-12">
+                        <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                        </svg>
+                        <h3 class="text-lg font-medium text-gray-900 mb-2">No NextSpaces yet</h3>
+                        <p class="text-gray-500 text-sm mb-4">Create your first NextSpace to get started.</p>
                         <a href="{{ route('admin.nextspaces.create') }}" 
-                           class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-indigo-700 transform hover:scale-105 transition-all duration-200 shadow-lg">
-                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                           class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition-colors">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                             </svg>
                             Create Your First NextSpace
                         </a>
                     </div>
                 @else
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        @foreach ($nextspaces as $nextspace)
-                            <div class="bg-white border border-gray-200 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 overflow-hidden group">
-                                <div class="relative">
-                                    <img src="{{ $nextspace->image ?? 'https://placehold.co/400x250/E0F2F7/00B4D8?text=NextSpace+Image' }}" 
-                                         alt="{{ $nextspace->title }}" 
-                                         class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-200">
-                                    <div class="absolute top-3 right-3">
-                                        <span class="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-lg">
+                    <div class="p-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            @foreach ($nextspaces as $nextspace)
+                                <div class="border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
+                                    <div class="relative">
+                                        <img src="{{ $nextspace->image ?? 'https://placehold.co/400x200/E5E7EB/6B7280?text=NextSpace' }}" 
+                                             alt="{{ $nextspace->title }}" 
+                                             class="w-full h-32 object-cover">
+                                        <span class="absolute top-2 right-2 bg-green-500 text-white px-2 py-1 rounded text-xs font-medium">
                                             Active
                                         </span>
                                     </div>
-                                </div>
-                                
-                                <div class="p-6">
-                                    <h3 class="text-xl font-bold text-gray-900 mb-2 line-clamp-1">{{ $nextspace->title }}</h3>
-                                    <div class="flex items-center text-gray-600 mb-3">
-                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                        </svg>
-                                        <span class="text-sm line-clamp-1">{{ $nextspace->address }}</span>
-                                    </div>
                                     
-                                    <div class="flex items-center justify-between mb-4">
-                                        <div class="flex items-center">
-                                            <svg class="w-4 h-4 text-green-600 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                                    <div class="p-4">
+                                        <h3 class="font-medium text-gray-900 mb-2 truncate">{{ $nextspace->title }}</h3>
+                                        
+                                        <div class="flex items-center text-gray-600 mb-2">
+                                            <svg class="w-4 h-4 mr-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                             </svg>
-                                            <span class="text-lg font-bold text-green-600">${{ number_format($nextspace->base_price, 2) }}</span>
+                                            <span class="text-xs truncate">{{ $nextspace->address }}</span>
                                         </div>
-                                        <span class="text-sm text-gray-500">Base Price</span>
-                                    </div>
-                                    
-                                    <div class="flex gap-2">
-                                        <a href="{{ route('nextspaces.show', ['id' => $nextspace->id]) }}" 
-                                           class="flex-1 bg-blue-50 hover:bg-blue-100 text-blue-700 font-medium py-2 px-3 rounded-lg text-center text-sm transition-colors duration-150">
-                                            View Details
-                                        </a>
-                                        <a href="{{ route('admin.nextspaces.edit', $nextspace->id) }}" 
-                                           class="flex-1 bg-amber-50 hover:bg-amber-100 text-amber-700 font-medium py-2 px-3 rounded-lg text-center text-sm transition-colors duration-150">
-                                            Edit
-                                        </a>
-                                        <form action="{{ route('admin.nextspaces.destroy', $nextspace->id) }}" 
-                                              method="POST" 
-                                              onsubmit="return confirm('Are you sure you want to delete this NextSpace? This action cannot be undone.')" 
-                                              class="flex-1">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" 
-                                                    class="w-full bg-red-50 hover:bg-red-100 text-red-700 font-medium py-2 px-3 rounded-lg text-sm transition-colors duration-150">
-                                                Delete
-                                            </button>
-                                        </form>
+
+                                        <div class="mb-3">
+                                        <p class="text-xs font-medium text-gray-700 mb-1">Time Slots:</p>
+                                        <div class="{{ $nextspace->timeSlots->count() > 4 ? 'max-h-28 overflow-y-auto pr-2' : '' }} space-y-1">
+                                            @foreach($nextspace->timeSlots as $slot)
+                                                <div class="text-xs text-gray-600 flex justify-between">
+                                                    <span>{{ $slot->slot }}</span>
+                                                    <span class="text-blue-600 font-medium">{{ $slot->pivot->capacity }}</span>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </div>  
+                                        
+                                        <div class="flex items-center justify-between mb-3">
+                                            <span class="text-lg font-semibold text-blue-600">${{ number_format($nextspace->base_price, 2) }}</span>
+                                            <span class="text-xs text-gray-500">Base Price</span>
+                                        </div>
+                                        
+                                        <div class="flex gap-2">
+                                            <a href="{{ route('nextspaces.show', ['id' => $nextspace->id]) }}" 
+                                               class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-medium py-2 px-3 rounded text-center transition-colors">
+                                                View
+                                            </a>
+                                            <a href="{{ route('admin.nextspaces.edit', $nextspace->id) }}" 
+                                               class="flex-1 bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-medium py-2 px-3 rounded text-center transition-colors">
+                                                Edit
+                                            </a>
+                                            <form action="{{ route('admin.nextspaces.destroy', $nextspace->id) }}" 
+                                                  method="POST" 
+                                                  onsubmit="return confirm('Delete this NextSpace?')" 
+                                                  class="flex-1">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" 
+                                                        class="w-full bg-red-50 hover:bg-red-100 text-red-700 text-xs font-medium py-2 px-3 rounded transition-colors">
+                                                    Delete
+                                                </button>
+                                            </form>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        @endforeach
+                            @endforeach
+                        </div>
                     </div>
                 @endif
             </div>

@@ -50,6 +50,10 @@
                             @enderror
                         </div>
 
+                        
+
+                        
+
                         <div class="md:col-span-2">
                             <label class="block text-sm font-medium text-gray-700 mb-2">
                                 Address <span class="text-red-500">*</span>
@@ -113,6 +117,27 @@
                             @enderror
                         </div>
                     </div>
+
+                    @php
+    $existingHours = $nextspace->hours->pluck('day_type')->toArray();
+@endphp
+
+<div class="flex items-center gap-6 mb-2">
+    <label class="flex items-center">
+        <input type="checkbox" name="hours[]" value="Monday - Friday 08:00 - 17:00"
+            {{ (is_array(old('hours')) && in_array('Monday - Friday 08:00 - 17:00', old('hours')))
+                || (!old('hours') && in_array('mon-fri', $existingHours)) ? 'checked' : '' }}
+            class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+        <span class="ml-2 text-sm text-gray-700">Monday - Friday 08:00 - 17:00</span>
+    </label>
+    <label class="flex items-center">
+        <input type="checkbox" name="hours[]" value="Saturday - Sunday 08:00 - 17:00"
+            {{ (is_array(old('hours')) && in_array('Saturday - Sunday 08:00 - 17:00', old('hours')))
+                || (!old('hours') && in_array('sat-sun', $existingHours)) ? 'checked' : '' }}
+            class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+        <span class="ml-2 text-sm text-gray-700">Saturday - Sunday 08:00 - 17:00</span>
+    </label>
+</div>
 
                     <div class="mt-6">
                         <label class="block text-sm font-medium text-gray-700 mb-2">
@@ -233,7 +258,6 @@
                     @enderror
                 </div>
 
-                {{-- Services --}}
                 <div class="bg-white rounded-lg shadow-sm p-6">
                     <h2 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                         🛎️ Additional Services
@@ -278,15 +302,20 @@
                     
                     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                         @foreach($allTimeSlots as $slot)
-                            <label class="flex items-center p-3 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 cursor-pointer transition-colors">
-                                <input type="checkbox" 
-                                       name="time_slot_ids[]" 
-                                       value="{{ $slot->id }}"
-                                       class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                                       {{ in_array($slot->id, old('time_slot_ids', $nextspace->timeSlots->pluck('id')->toArray())) ? 'checked' : '' }}>
-                                <span class="ml-2 text-sm font-mono">{{ $slot->slot }}</span>
-                            </label>
-                        @endforeach
+    <div class="flex items-center mb-2">
+        <input type="checkbox" name="time_slot_ids[]" value="{{ $slot->id }}"
+            {{ $nextspace->timeSlots->contains($slot->id) ? 'checked' : '' }}>
+        <span class="ml-2 w-32">{{ $slot->slot }}</span>
+        <select name="capacities[{{ $slot->id }}]" class="ml-2 border rounded px-2 py-1 w-24">
+            @for($i = 1; $i <= 20; $i++)
+                <option value="{{ $i }}"
+                    @if(($nextspace->timeSlots->find($slot->id)?->pivot->capacity ?? 1) == $i) selected @endif>
+                    {{ $i }}
+                </option>
+            @endfor
+        </select>
+    </div>
+@endforeach
                     </div>
                     @error('time_slot_ids')
                         <p class="text-red-500 text-sm mt-3 flex items-center">
@@ -317,6 +346,8 @@
                         </button>
                     </div>
                 </div>
+
+
             </form>
         </div>
     </div>

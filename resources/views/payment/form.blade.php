@@ -78,17 +78,18 @@
                                     Waktu <span class="text-red-500">*</span>
                                 </label>
                                 <select 
-                                    name="selected_time_slot_id"
-                                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                    required
-                                >
-                                    <option value="">Pilih waktu</option>
-                                    @foreach ($nextspace->timeSlots as $slot)
-                                        <option value="{{ $slot->id }}" {{ old('selected_time_slot_id') == $slot->id ? 'selected' : '' }}>
-                                            {{ $slot->slot }}
-                                        </option>
-                                    @endforeach
-                                </select>
+    name="selected_time_slot_id"
+    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+    required
+>
+    <option value="">Pilih waktu</option>
+    @foreach ($nextspace->timeSlots as $slot)
+        <option value="{{ $slot->id }}" {{ old('selected_time_slot_id') == $slot->id ? 'selected' : '' }}
+            @if($slot->pivot->capacity <= 0) disabled @endif>
+            {{ $slot->slot }} (Sisa: {{ $slot->pivot->capacity }})
+        </option>
+    @endforeach
+</select>
                                 @error('selected_time_slot_id')
                                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                 @enderror
@@ -122,6 +123,8 @@
                             </div>
                             @endif
                         </div>
+
+                        
 
                         {{-- Payment Method --}}
                         <div class="border-t pt-4">

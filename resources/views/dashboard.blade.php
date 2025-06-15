@@ -36,18 +36,14 @@
                                         $displayTimeSlots = $nextspace->timeSlots->pluck('slot')->toArray();
 
                                         // Safely get hours and ensure it's an array for implode
-                                        $displayHours = $nextspace->hours && $nextspace->hours->count()
-                                            ? $nextspace->hours->map(function($hour) {
-                                                return "{$hour->day}: {$hour->open_time} - {$hour->close_time}";
-                                            })->implode(', ')
-                                            : 'N/A';
+                                        $displayHours = $nextspace->hours ?? 'N/A';
                                     @endphp
                                     <x-product-card
                                         imageUrl="{{ $nextspace->image ?? 'https://placehold.co/400x250/E0F2F7/00B4D8?text=NextSpace+Image' }}"
                                         title="{{ $nextspace->title }}"
                                         addressLine1="{{ $nextspace->address }}"
                                         addressLine2=""
-                                        hours="{{ $displayHours }}"
+                                        :hours="$displayHours"
                                         :timeSlots="$displayTimeSlots"
                                         :detailUrl="route('nextspaces.show', ['id' => $nextspace->id])"
                                         class="group transition-all duration-300 hover:shadow-lg"

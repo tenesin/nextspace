@@ -87,17 +87,24 @@
                     @endif
                 </div>
             </div>
+@php
+    $formattedHours = '';
+    if (is_iterable($hours) && count($hours)) {
+        $formattedHours = collect($hours)->map(function($hour) {
+            $label = $hour->day_type === 'mon-fri' ? 'Monday - Friday' : 'Saturday - Sunday';
+            return $label . ' ' . $hour->open_time . ' - ' . $hour->close_time;
+        })->implode('<br>');
+    }
+@endphp
 
-            {{-- Hours Section with Icon --}}
-            @if($hours && $hours !== 'N/A')
-                <div class="flex items-center gap-2 mb-4">
-                    <svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    <p class="text-sm text-gray-600">{{ $hours }}</p>
-                </div>
-            @endif
-
+@if($formattedHours)
+    <div class="flex items-center gap-2 mb-4">
+        <svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <p class="text-sm text-gray-600">{!! $formattedHours !!}</p>
+    </div>
+@endif
             {{-- Time Slots with Enhanced Styling --}}
             @php
                 $safeTimeSlots = [];

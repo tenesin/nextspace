@@ -6,8 +6,7 @@ use App\Models\Nextspace;
 
 class NextspaceHour extends Model
 {
-    protected $fillable = ['nextspace_id', 'day', 'open_time', 'close_time'];
-
+    protected $fillable = ['nextspace_id', 'day_type', 'open_time', 'close_time'];
     public function nextspace()
     {
         return $this->belongsTo(Nextspace::class);

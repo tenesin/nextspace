@@ -11,8 +11,10 @@ class TimeSlot extends Model
 
     protected $fillable = ['slot'];
 
-    public function nextSpaces()
-    {
-        return $this->hasMany(NextSpace::class, 'time_slots');
-    }
+public function nextspaces()
+{
+    return $this->belongsToMany(Nextspace::class, 'nextspace_time_slot')
+        ->withPivot('capacity')
+        ->withTimestamps();
+}
 }

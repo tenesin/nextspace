@@ -53,13 +53,17 @@ class Nextspace extends Model
         return $this->belongsToMany(Service::class, 'nextspace_service');
     }
 
-    public function timeSlots(): BelongsToMany
-    {
-        return $this->belongsToMany(TimeSlot::class, 'nextspace_time_slot');
-    }
+public function timeSlots()
+{
+    return $this->belongsToMany(TimeSlot::class, 'nextspace_time_slot')
+        ->withPivot('capacity')
+        ->withTimestamps();
+}
     
     public function hours()
     {
         return $this->hasMany(NextspaceHour::class, 'nextspace_id');
     }
+
+    
 }

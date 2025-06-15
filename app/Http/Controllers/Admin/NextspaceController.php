@@ -4,11 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Nextspace;
+use App\Models\NextspaceHour;
 use App\Models\Amenity;
 use App\Models\Service;
 use App\Models\TimeSlot;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
 use App\Models\User;
 use App\Exports\NextspacesExport;
 use Maatwebsite\Excel\Facades\Excel;
@@ -19,10 +19,7 @@ class NextspaceController extends Controller
     {
         $users = User::withCount('bookings')->get();
         $nextspaces = Nextspace::all();
-
-        // Count users who have at least one booking/order
         $usersWithOrders = User::whereHas('bookings')->count();
-        // If your model is Order, use 'orders' instead of 'bookings'
 
         return view('admin.nextspaces.index', compact('users', 'nextspaces', 'usersWithOrders'));
     }
@@ -35,6 +32,21 @@ class NextspaceController extends Controller
         return view('admin.nextspaces.create', compact('amenities', 'services', 'timeSlots'));
     }
 
+    public function show(Nextspace $nextspace)
+    {
+        $nextspace->load(['amenities', 'services', 'timeSlots', 'hours']);
+        return view('admin.nextspaces.show', compact('nextspace'));
+    }
+
+    public function edit($id)
+    {
+        $nextspace = Nextspace::with(['amenities', 'services', 'timeSlots', 'hours'])->findOrFail($id);
+        $allAmenities = Amenity::all();
+        $allServices = Service::all();
+        $allTimeSlots = TimeSlot::all();
+        return view('admin.nextspaces.edit', compact('nextspace', 'allAmenities', 'allServices', 'allTimeSlots'));
+    }
+
     public function store(Request $request)
     {
         $validatedData = $request->validate([
@@ -43,53 +55,52 @@ class NextspaceController extends Controller
             'image' => 'nullable|url',
             'address' => 'required|string|max:255',
             'phone' => 'nullable|string|max:20',
-            'hours' => 'nullable|string',
             'rating' => 'nullable|numeric|min:0|max:5',
             'reviews_count' => 'nullable|integer|min:0',
-            'amenities' => 'array',
-            'services' => 'array',
-            'time_slots' => 'array',
             'base_price' => 'nullable|numeric|min:0',
         ]);
 
-        // Prepare data for creation (exclude relationship arrays)
-        $nextspaceData = Arr::except($validatedData, [
-            'amenities',
-            'services',
-            'time_slots'
-        ]);
+        $nextspace = Nextspace::create($validatedData);
 
-        // Add hours if present
-        if ($request->filled('hours')) {
-            $nextspaceData['hours'] = $request->input('hours');
+        // Handle hours selection from form, prevent duplicates
+        $hoursInput = $request->input('hours', []);
+        $hoursData = [];
+        foreach ($hoursInput as $hour) {
+            if (str_contains($hour, 'Monday - Friday')) {
+                $hoursData['mon-fri'] = [
+                    'nextspace_id' => $nextspace->id,
+                    'day_type' => 'mon-fri',
+                    'open_time' => '08:00',
+                    'close_time' => '17:00',
+                ];
+            }
+            if (str_contains($hour, 'Saturday - Sunday')) {
+                $hoursData['sat-sun'] = [
+                    'nextspace_id' => $nextspace->id,
+                    'day_type' => 'sat-sun',
+                    'open_time' => '08:00',
+                    'close_time' => '17:00',
+                ];
+            }
         }
-
-        // Create nextspace
-        $nextspace = Nextspace::create($nextspaceData);
+        foreach ($hoursData as $hour) {
+            $nextspace->hours()->create($hour);
+        }
 
         // Sync relationships
         $nextspace->amenities()->sync($request->input('amenity_ids', []));
         $nextspace->services()->sync($request->input('service_ids', []));
-        $nextspace->timeSlots()->sync($request->input('time_slot_ids', []));
+        $timeSlotIds = $request->input('time_slot_ids', []);
+        $capacities = $request->input('capacities', []);
+        $syncData = [];
+        foreach ($timeSlotIds as $slotId) {
+            $syncData[$slotId] = ['capacity' => $capacities[$slotId] ?? 1];
+        }
+        $nextspace->timeSlots()->sync($syncData);
 
         return redirect()->route('admin.nextspaces.index')
             ->with('success', 'NextSpace created successfully.');
     }
-
-    public function show(Nextspace $nextspace)
-    {
-        $nextspace->load(['amenities', 'services', 'timeSlots']);
-        return view('admin.nextspaces.show', compact('nextspace'));
-    }
-
-    public function edit($id)
-{
-    $nextspace = Nextspace::with(['amenities', 'services', 'timeSlots'])->findOrFail($id);
-    $allAmenities = Amenity::all();
-    $allServices = Service::all();
-    $allTimeSlots = TimeSlot::all();
-    return view('admin.nextspaces.edit', compact('nextspace', 'allAmenities', 'allServices', 'allTimeSlots'));
-}
 
     public function update(Request $request, Nextspace $nextspace)
     {
@@ -99,34 +110,51 @@ class NextspaceController extends Controller
             'image' => 'nullable|url',
             'address' => 'required|string|max:255',
             'phone' => 'nullable|string|max:20',
-            'hours' => 'nullable|string',
             'rating' => 'nullable|numeric|min:0|max:5',
             'reviews_count' => 'nullable|integer|min:0',
-            'amenities' => 'array',
-            'services' => 'array',
-            'time_slots' => 'array',
             'base_price' => 'nullable|numeric|min:0',
         ]);
 
-        // Prepare data for update (exclude relationship arrays)
-        $nextspaceData = Arr::except($validatedData, [
-            'amenities',
-            'services',
-            'time_slots'
-        ]);
+        $nextspace->update($validatedData);
 
-        // Add hours if present
-        if ($request->filled('hours')) {
-            $nextspaceData['hours'] = $request->input('hours');
+        // Remove old hours
+        $nextspace->hours()->delete();
+
+        // Prepare new hours, only one per day_type
+        $hoursInput = $request->input('hours', []);
+        $hoursData = [];
+        foreach ($hoursInput as $hour) {
+            if (str_contains($hour, 'Monday - Friday')) {
+                $hoursData['mon-fri'] = [
+                    'nextspace_id' => $nextspace->id,
+                    'day_type' => 'mon-fri',
+                    'open_time' => '08:00',
+                    'close_time' => '17:00',
+                ];
+            }
+            if (str_contains($hour, 'Saturday - Sunday')) {
+                $hoursData['sat-sun'] = [
+                    'nextspace_id' => $nextspace->id,
+                    'day_type' => 'sat-sun',
+                    'open_time' => '08:00',
+                    'close_time' => '17:00',
+                ];
+            }
         }
-
-        // Update nextspace
-        $nextspace->update($nextspaceData);
+        foreach ($hoursData as $hour) {
+            $nextspace->hours()->create($hour);
+        }
 
         // Sync relationships
         $nextspace->amenities()->sync($request->input('amenity_ids', []));
-$nextspace->services()->sync($request->input('service_ids', []));
-$nextspace->timeSlots()->sync($request->input('time_slot_ids', []));
+        $nextspace->services()->sync($request->input('service_ids', []));
+        $timeSlotIds = $request->input('time_slot_ids', []);
+        $capacities = $request->input('capacities', []);
+        $syncData = [];
+        foreach ($timeSlotIds as $slotId) {
+            $syncData[$slotId] = ['capacity' => $capacities[$slotId] ?? 1];
+        }
+        $nextspace->timeSlots()->sync($syncData);
 
         return redirect()->route('admin.nextspaces.index')
             ->with('success', 'NextSpace updated successfully.');
@@ -137,40 +165,15 @@ $nextspace->timeSlots()->sync($request->input('time_slot_ids', []));
         $nextspace->amenities()->detach();
         $nextspace->services()->detach();
         $nextspace->timeSlots()->detach();
+        $nextspace->hours()->delete();
         $nextspace->delete();
 
         return redirect()->route('admin.nextspaces.index')
             ->with('success', 'NextSpace deleted successfully.');
     }
 
-    /**
-     * Helper method to parse JSON input safely (not used anymore, but kept for reference)
-     */
-    private function parseJsonInput($input)
+    public function exportReport()
     {
-        if (is_null($input) || $input === '') {
-            return [];
-        }
-        if (is_array($input)) {
-            return $input;
-        }
-        $decoded = json_decode($input, true);
-        return is_array($decoded) ? $decoded : [];
+        return Excel::download(new NextspacesExport, 'nextspaces_business_report.xlsx');
     }
-
-    /**
-     * Get time slot names for display (helper method)
-     */
-    public function getTimeSlotNames(array $timeSlotIds)
-    {
-        if (empty($timeSlotIds)) {
-            return collect();
-        }
-        return TimeSlot::whereIn('id', $timeSlotIds)
-            ->pluck('slot', 'id');
-    }
-
-  public function exportReport()
-{
-return Excel::download(new NextspacesExport, 'nextspaces_business_report.xlsx');}
 }

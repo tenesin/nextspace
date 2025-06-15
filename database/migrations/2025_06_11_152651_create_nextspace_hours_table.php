@@ -1,19 +1,22 @@
 <?php
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+class CreateNextspaceHoursTable extends Migration
+{
     public function up()
     {
         Schema::create('nextspace_hours', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('nextspace_id')->constrained()->onDelete('cascade');
-            $table->string('day')->nullable(); // e.g. "Monday-Friday"
-            $table->string('open_time')->nullable(); // e.g. "08:00"
-            $table->string('close_time')->nullable(); // e.g. "18:00"
+            $table->unsignedBigInteger('nextspace_id');
+            $table->enum('day_type', ['mon-fri', 'sat-sun']);
+            $table->string('open_time')->default('08:00');
+            $table->string('close_time')->default('20:00');
             $table->timestamps();
+
+            $table->foreign('nextspace_id')->references('id')->on('nextspaces')->onDelete('cascade');
+            $table->unique(['nextspace_id', 'day_type']);
         });
     }
 
@@ -21,4 +24,4 @@ return new class extends Migration {
     {
         Schema::dropIfExists('nextspace_hours');
     }
-};
+}
