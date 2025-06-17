@@ -41,7 +41,7 @@
                                 <h3 class="font-semibold text-gray-900">{{ $nextspace->title }}</h3>
                                 <p class="text-sm text-gray-600">📍 {{ $nextspace->address }}</p>
                                 <p class="text-lg font-bold text-blue-600 mt-1">
-                                    $ {{ number_format($nextspace->base_price, 0, ',', '.') }}
+                                    Rp {{ number_format($nextspace->base_price, 0, ',', '.') }}
                                 </p>
                             </div>
                         </div>
@@ -114,7 +114,7 @@
                                             <div class="ml-2 flex-1 flex justify-between">
                                                 <span class="text-sm">{{ $service->name }}</span>
                                                 <span class="text-sm font-medium text-blue-600">
-                                                    +$ {{ number_format($service->price ?? 0, 0, ',', '.') }}
+                                                    +Rp {{ number_format($service->price ?? 0, 0, ',', '.') }}
                                                 </span>
                                             </div>
                                         </label>

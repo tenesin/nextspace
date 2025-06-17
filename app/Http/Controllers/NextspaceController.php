@@ -17,7 +17,7 @@ class NextspaceController extends Controller
     public function index()
     {
         // Mengambil data Nextspace terbaru, 4 per halaman
-        $nextspaces = Nextspace::latest()->paginate(4);
+        $nextspaces = Nextspace::latest()->paginate(6);
 
         return view('dashboard', compact('nextspaces'));
     }

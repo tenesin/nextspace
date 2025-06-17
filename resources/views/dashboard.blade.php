@@ -1,262 +1,194 @@
 <x-app-layout>
-    <div class="py-12 bg-gray-100">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="lg:grid lg:grid-cols-3 lg:gap-8">
-                {{-- Main Content Area (Our Place) --}}
-                <div class="lg:col-span-2">
-                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 mb-8">
-                        <div class="flex justify-between items-center mb-8">
-                            <h2 class="text-2xl font-semibold text-text-primary">Our Place</h2>
-                            <span class="text-sm text-gray-500">{{ $nextspaces->count() }} spaces available</span>
+    <div class="py-6 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="lg:grid lg:grid-cols-4 lg:gap-6">
+                {{-- Main Content Area --}}
+                <div class="lg:col-span-3">
+                    <div class="bg-white rounded-lg shadow-sm p-4 mb-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h1 class="text-xl font-semibold text-gray-900">Available Spaces</h1>
+                            <span class="text-sm text-gray-500 bg-blue-50 px-2 py-1 rounded">{{ $nextspaces->count() }} spaces</span>
                         </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
                             @if ($nextspaces->isEmpty())
-                                <div class="col-span-full py-12 flex flex-col items-center justify-center bg-gray-50 rounded-lg border border-gray-200 border-dashed">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                                    </svg>
-                                    <p class="text-text-secondary text-center">No NextSpaces available yet. Please check back later!</p>
+                                <div class="col-span-full py-8 text-center bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
+                                    <div class="w-12 h-12 mx-auto mb-3 text-gray-300">
+                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                        </svg>
+                                    </div>
+                                    <p class="text-gray-500">No spaces available</p>
                                 </div>
                             @else
                                 @foreach ($nextspaces as $nextspace)
                                     @php
-                                        // Safely get amenity IDs and fetch names for display
                                         $rawAmenityIds = $nextspace->amenities ?? [];
                                         $amenityIds = is_string($rawAmenityIds) ? json_decode($rawAmenityIds, true) : $rawAmenityIds;
                                         $amenityIds = is_array($amenityIds) ? $amenityIds : [];
-                                        $displayAmenities = \App\Models\Amenity::whereIn('id', $amenityIds)->pluck('name')->implode(', ');
+                                        $displayAmenities = \App\Models\Amenity::whereIn('id', $amenityIds)->pluck('name')->take(3)->implode(', ');
 
-                                        // Safely get service IDs and fetch names for display
                                         $rawServiceIds = $nextspace->services ?? [];
                                         $serviceIds = is_string($rawServiceIds) ? json_decode($rawServiceIds, true) : $rawServiceIds;
                                         $serviceIds = is_array($serviceIds) ? $serviceIds : [];
-                                        $displayServices = \App\Models\Service::whereIn('id', $serviceIds)->pluck('name')->implode(', ');
+                                        $displayServices = \App\Models\Service::whereIn('id', $serviceIds)->pluck('name')->take(3)->implode(', ');
 
-                                        $displayTimeSlots = $nextspace->timeSlots->pluck('slot')->toArray();
-
-                                        // Safely get hours and ensure it's an array for implode
+                                        $displayTimeSlots = $nextspace->timeSlots->pluck('slot')->take(3)->toArray();
                                         $displayHours = $nextspace->hours ?? 'N/A';
                                     @endphp
-                                    <x-product-card
-                                        imageUrl="{{ $nextspace->image ?? 'https://placehold.co/400x250/E0F2F7/00B4D8?text=NextSpace+Image' }}"
-                                        title="{{ $nextspace->title }}"
-                                        addressLine1="{{ $nextspace->address }}"
-                                        addressLine2=""
-                                        :hours="$displayHours"
-                                        :timeSlots="$displayTimeSlots"
-                                        :detailUrl="route('nextspaces.show', ['id' => $nextspace->id])"
-                                        class="group transition-all duration-300 hover:shadow-lg"
-                                    >
-                                        <div class="space-y-3">
-                                            {{-- Amenities with icon --}}
-                                            @if(!empty($displayAmenities))
-                                                <div class="flex items-start gap-2 text-sm text-gray-600">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-primary mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                                    </svg>
-                                                    <span class="line-clamp-1">{{ $displayAmenities }}</span>
-                                                </div>
-                                            @endif
-
-                                            {{-- Services with icon --}}
-                                            @if(!empty($displayServices))
-                                                <div class="flex items-start gap-2 text-sm text-gray-600">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-primary mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                                    </svg>
-                                                    <span class="line-clamp-1">{{ $displayServices }}</span>
-                                                </div>
-                                            @endif
-
-                                            {{-- Time Slots with icon --}}
-                                            @if(!empty($displayTimeSlots))
-                                                <div class="flex items-start gap-2 text-sm text-gray-600">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-primary mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                    </svg>
-                                                    <span class="line-clamp-2">{{ implode(', ', $displayTimeSlots) }}</span>
-                                                </div>
-                                            @endif
+                                    
+                                    <div class="bg-white border border-gray-200 rounded-lg hover:border-blue-300 hover:shadow-md transition-all duration-200">
+                                        {{-- Image --}}
+                                        <div class="aspect-video bg-gray-100 rounded-t-lg overflow-hidden">
+                                            <img src="{{ $nextspace->image ?? 'https://placehold.co/400x225/F3F4F6/6B7280?text=NextSpace' }}" 
+                                                 alt="{{ $nextspace->title }}" 
+                                                 class="w-full h-full object-cover">
                                         </div>
+                                        
+                                        {{-- Content --}}
+                                        <div class="p-3">
+                                            <h3 class="font-medium text-gray-900 mb-1 truncate">{{ $nextspace->title }}</h3>
+                                            <p class="text-sm text-gray-600 mb-2 truncate">{{ $nextspace->address }}</p>
+                                            
+                                            {{-- Compact Info --}}
+                                            <div class="space-y-1 text-xs text-gray-500 mb-3">
+                                                @if(!empty($displayAmenities))
+                                                    <div class="flex items-center gap-1">
+                                                        <span class="w-3 h-3 text-blue-500">✓</span>
+                                                        <span class="truncate">{{ $displayAmenities }}</span>
+                                                    </div>
+                                                @endif
+                                                
+                                                @if(!empty($displayServices))
+                                                    <div class="flex items-center gap-1">
+                                                        <span class="w-3 h-3 text-blue-500">⚡</span>
+                                                        <span class="truncate">{{ $displayServices }}</span>
+                                                    </div>
+                                                @endif
+                                                
+                                                @if(!empty($displayTimeSlots))
+                                                    <div class="flex items-center gap-1">
+                                                        <span class="w-3 h-3 text-blue-500">🕒</span>
+                                                        <span class="truncate">{{ implode(', ', $displayTimeSlots) }}</span>
+                                                    </div>
+                                                @endif
+                                            </div>
 
-                                        {{-- Conditional Admin Actions for Dashboard --}}
-                                        @auth
-                                            @if (Auth::user()->role === 'admin')
-                                                <div class="flex justify-end gap-2 mt-4 pt-4 border-t border-gray-100">
-                                                    <a href="{{ route('admin.nextspaces.edit', $nextspace->id) }}" class="text-primary hover:text-primary-dark text-sm font-medium inline-flex items-center transition-colors">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                                        </svg>
-                                                        Edit
-                                                    </a>
-                                                    <form action="{{ route('admin.nextspaces.destroy', $nextspace->id) }}" method="POST" class="inline-block">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="text-red-600 hover:text-red-900 text-sm font-medium inline-flex items-center transition-colors" onclick="return confirm('Are you sure you want to delete this NextSpace?');">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                            {{-- Actions --}}
+                                            <div class="flex gap-2">
+                                                <a href="{{ route('nextspaces.show', ['id' => $nextspace->id]) }}" 
+                                                   class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 px-3 rounded text-center transition-colors">
+                                                    View Details
+                                                </a>
+                                                
+                                                @auth
+                                                    @if (Auth::user()->role === 'admin')
+                                                        <a href="{{ route('admin.nextspaces.edit', $nextspace->id) }}" 
+                                                           class="text-blue-600 hover:text-blue-800 text-sm p-2">
+                                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                                             </svg>
-                                                            Delete
-                                                        </button>
-                                                    </form>
-                                                </div>
-                                            @endif
-                                        @endauth
-
-                                        {{-- View Details Button --}}
-                                        <div class="mt-4 text-center">
-                                            <a href="{{ route('nextspaces.show', ['id' => $nextspace->id]) }}" class="inline-flex items-center justify-center w-full py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200">
-                                                View Details
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                                                </svg>
-                                            </a>
+                                                        </a>
+                                                        <form action="{{ route('admin.nextspaces.destroy', $nextspace->id) }}" method="POST" class="inline">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" class="text-red-500 hover:text-red-700 text-sm p-2" 
+                                                                    onclick="return confirm('Delete this space?');">
+                                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                                </svg>
+                                                            </button>
+                                                        </form>
+                                                    @endif
+                                                @endauth
+                                            </div>
                                         </div>
-                                    </x-product-card>
+                                    </div>
                                 @endforeach
-                                <div class="mt-8">
-        {{ $nextspaces->links() }}
-    </div>
+                                
+                                {{-- Pagination --}}
+                                <div class="col-span-full mt-4">
+                                    {{ $nextspaces->links() }}
+                                </div>
                             @endif
                         </div>
                     </div>
                 </div>
 
-                {{-- Sidebar Area (with improved styling) --}}
-                <div class="lg:col-span-1 mt-8 lg:mt-0 space-y-8">
-                    {{-- Your Savings Section --}}
-                   <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 transition-all duration-300 hover:shadow-md">
-    <h3 class="text-lg font-semibold text-text-primary mb-4 flex items-center">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 17l4 4 4-4m0-5V3m0 0L8 7m8-4l-8 4" />
-        </svg>
-        My Bookings
-    </h3>
-    @php
-        $bookingCount = Auth::user()->bookings()->count();
-        $lastBooking = Auth::user()->bookings()->latest()->first();
-    @endphp
-    <div class="text-center py-4">
-        <div class="text-4xl font-bold text-primary">{{ $bookingCount }}</div>
-        <div class="text-text-secondary text-base font-normal mt-1">Total Bookings</div>
-        @if($lastBooking)
-            <div class="mt-2 text-sm text-gray-500">
-                Last booking:<br>
-                <span class="font-medium">{{ $lastBooking->created_at->format('M d, Y') }}</span>
-            </div>
-        @else
-            <div class="mt-2 text-sm text-gray-400">No bookings yet.</div>
-        @endif
-    </div>
-    <div class="mt-4 text-center">
-        <a href="{{ route('history.index') }}" class="inline-flex items-center px-4 py-2 bg-primary text-white rounded-md text-sm font-medium hover:bg-primary-dark transition">
-            View Booking History
-        </a>
-    </div>
-</div>
-                    {{-- All Locations Section --}}
-                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 transition-all duration-300 hover:shadow-md">
-                        <h3 class="text-lg font-semibold text-text-primary mb-4 flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.828 0L6.343 16.657a8 8 0 1111.314 0z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                            </svg>
-                            All Locations
+                {{-- Sidebar --}}
+                <div class="lg:col-span-1 space-y-4">
+                    {{-- My Bookings --}}
+                    <div class="bg-white rounded-lg shadow-sm p-4">
+                        <h3 class="font-medium text-gray-900 mb-3 flex items-center">
+                            <span class="w-4 h-4 mr-2 text-blue-600">📋</span>
+                            My Bookings
                         </h3>
-                        <ul class="space-y-4">
-                            <li class="flex items-start text-sm text-text-secondary group transition-all duration-200 hover:bg-gray-50 p-2 -mx-2 rounded-md">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-primary mr-2 mt-1 flex-shrink-0 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.828 0L6.343 16.657a8 8 0 1111.314 0z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                                </svg>
-                                <div>
-                                    <span class="font-medium text-text-primary">North Miami Beach</span><br>
-                                    3913 NE 163rd St<br>
-                                    North Miami Beach, FL 33160
+                        @php
+                            $bookingCount = Auth::user()->bookings()->count();
+                            $lastBooking = Auth::user()->bookings()->latest()->first();
+                        @endphp
+                        <div class="text-center py-3">
+                            <div class="text-2xl font-bold text-blue-600">{{ $bookingCount }}</div>
+                            <div class="text-sm text-gray-500">Total Bookings</div>
+                            @if($lastBooking)
+                                <div class="text-xs text-gray-400 mt-1">
+                                    Last: {{ $lastBooking->created_at->format('M d, Y') }}
                                 </div>
-                            </li>
-                            <li class="flex items-start text-sm text-text-secondary group transition-all duration-200 hover:bg-gray-50 p-2 -mx-2 rounded-md">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-primary mr-2 mt-1 flex-shrink-0 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.828 0L6.343 16.657a8 8 0 1111.314 0z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                                </svg>
-                                <div>
-                                    <span class="font-medium text-text-primary">East Rutherford</span><br>
-                                    1 American Dream Way<br>
-                                    #F225 East Rutherford, NJ 07073
-                                </div>
-                            </li>
-                            <li class="flex items-start text-sm text-text-secondary group transition-all duration-200 hover:bg-gray-50 p-2 -mx-2 rounded-md">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-primary mr-2 mt-1 flex-shrink-0 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.828 0L6.343 16.657a8 8 0 1111.314 0z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                                </svg>
-                                <div>
-                                    <span class="font-medium text-text-primary">Sunrise</span><br>
-                                    1760 Sawgrass Mills Circle<br>
-                                    Sunrise, FL 33323-3912
-                                </div>
-                            </li>
-                            <li class="flex items-start text-sm text-text-secondary group transition-all duration-200 hover:bg-gray-50 p-2 -mx-2 rounded-md">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-primary mr-2 mt-1 flex-shrink-0 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.828 0L6.343 16.657a8 8 0 1111.314 0z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                                </svg>
-                                <div>
-                                    <span class="font-medium text-text-primary">Coral Gables</span><br>
-                                    4250 Salzedo Street, Suite 1425<br>
-                                    Coral Gables, FL 33146
-                                </div>
-                            </li>
-                            <li class="flex items-start text-sm text-text-secondary group transition-all duration-200 hover:bg-gray-50 p-2 -mx-2 rounded-md">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-primary mr-2 mt-1 flex-shrink-0 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.828 0L6.343 16.657a8 8 0 1111.314 0z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                                </svg>
-                                <div>
-                                    <span class="font-medium text-text-primary">Boca Raton</span><br>
-                                    344 Plaza Real, Suite 1433<br>
-                                    Boca Raton, FL 33432-3937
-                                </div>
-                            </li>
-                        </ul>
+                            @endif
+                        </div>
+                        <a href="{{ route('history.index') }}" 
+                           class="block w-full bg-blue-50 hover:bg-blue-100 text-blue-700 text-sm font-medium py-2 px-3 rounded text-center transition-colors">
+                            View History
+                        </a>
                     </div>
 
-                    {{-- Official Websites Section --}}
-                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 transition-all duration-300 hover:shadow-md">
-                        <h3 class="text-lg font-semibold text-text-primary mb-4 flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
-                            </svg>
-                            Official Websites
+                    {{-- Locations --}}
+                    <div class="bg-white rounded-lg shadow-sm p-4">
+                        <h3 class="font-medium text-gray-900 mb-3 flex items-center">
+                            <span class="w-4 h-4 mr-2 text-blue-600">📍</span>
+                            Locations
                         </h3>
-                        <ul class="space-y-3">
-                            <li class="group">
-                                <a href="#" class="flex items-center p-2 -mx-2 rounded-md transition-colors duration-200 hover:bg-gray-50">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary mr-2 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                                    </svg>
-                                    <span class="text-primary group-hover:text-primary-dark text-sm font-medium">Main Branch Website</span>
-                                </a>
-                            </li>
-                            <li class="group">
-                                <a href="#" class="flex items-center p-2 -mx-2 rounded-md transition-colors duration-200 hover:bg-gray-50">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary mr-2 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                                    </svg>
-                                    <span class="text-primary group-hover:text-primary-dark text-sm font-medium">Community Portal</span>
-                                </a>
-                            </li>
-                            <li class="group">
-                                <a href="#" class="flex items-center p-2 -mx-2 rounded-md transition-colors duration-200 hover:bg-gray-50">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary mr-2 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                                    </svg>
-                                    <span class="text-primary group-hover:text-primary-dark text-sm font-medium">Support & Help</span>
-                                </a>
-                            </li>
-                        </ul>
+                        <div class="space-y-2 text-sm">
+                            <div class="p-2 bg-gray-50 rounded text-gray-700">
+                                <div class="font-medium">Historica Coffee & Pastry</div>
+                                <div class="text-xs text-gray-500">Jl. Sumatera No.40, Gubeng</div>
+                            </div>
+                            <div class="p-2 bg-gray-50 rounded text-gray-700">
+                                <div class="font-medium">Caturra Espresso</div>
+                                <div class="text-xs text-gray-500">Jl. Anjasmoro No.32, Sawahan</div>
+                            </div>
+                            <div class="p-2 bg-gray-50 rounded text-gray-700">
+                                <div class="font-medium">Blackbarn Coffee</div>
+                                <div class="text-xs text-gray-500">Jl. Untung Suropati No.79</div>
+                            </div>
+                            <div class="p-2 bg-gray-50 rounded text-gray-700">
+                                <div class="font-medium">One Pose Cafe</div>
+                                <div class="text-xs text-gray-500">Jl. Puncak Permai II No.22</div>
+                            </div>
+                            <div class="p-2 bg-gray-50 rounded text-gray-700">
+                                <div class="font-medium">Carpentier Kitchen</div>
+                                <div class="text-xs text-gray-500">Jl. Untung Suropati No.83</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Quick Links --}}
+                    <div class="bg-white rounded-lg shadow-sm p-4">
+                        <h3 class="font-medium text-gray-900 mb-3 flex items-center">
+                            <span class="w-4 h-4 mr-2 text-blue-600">🔗</span>
+                            Quick Links
+                        </h3>
+                        <div class="space-y-2">
+                            <a href="#" class="block text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 p-2 rounded transition-colors">
+                                Main Website
+                            </a>
+                            <a href="#" class="block text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 p-2 rounded transition-colors">
+                                Community Portal
+                            </a>
+                            <a href="#" class="block text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 p-2 rounded transition-colors">
+                                Support & Help
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

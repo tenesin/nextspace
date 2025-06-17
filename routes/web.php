@@ -74,5 +74,6 @@ Route::post('/payment/penalty/{booking}', [PaymentController::class, 'payPenalty
 Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
 Route::post('/favorites/toggle/{nextspace}', [FavoriteController::class, 'toggle'])->name('favorites.toggle');
 
+Route::get('/history/{booking_id}/invoice', [HistoryController::class, 'invoice'])->name('history.invoice');
 
 require __DIR__.'/auth.php';

@@ -65,5 +65,9 @@ public function timeSlots()
         return $this->hasMany(NextspaceHour::class, 'nextspace_id');
     }
 
-    
+    public function reviews() 
+    {
+        return $this->hasMany(\App\Models\Review::class);
+    }
+
 }

@@ -15,13 +15,13 @@ class NextspaceHourSeeder extends Seeder
                 'nextspace_id' => $nextspace->id,
                 'day_type' => 'mon-fri',
                 'open_time' => '08:00',
-                'close_time' => '18:00',
+                'close_time' => '20:00',
             ]);
             NextspaceHour::create([
                 'nextspace_id' => $nextspace->id,
                 'day_type' => 'sat-sun',
                 'open_time' => '09:00',
-                'close_time' => '17:00',
+                'close_time' => '20:00',
             ]);
         }
     }

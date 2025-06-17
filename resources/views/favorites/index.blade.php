@@ -1,16 +1,23 @@
 <x-app-layout>
-    <div class="py-8 max-w-4xl mx-auto">
-        <h2 class="text-2xl font-bold mb-6">My Favorite Spaces</h2>
+    <div class="py-6 max-w-3xl mx-auto px-4">
+        <h2 class="text-xl font-medium mb-4 text-gray-800">My Favorite Spaces</h2>
         @forelse($favorites as $favorite)
-            <div class="bg-white rounded shadow p-4 mb-4 flex items-center justify-between">
-                <div>
-                    <div class="font-semibold text-lg">{{ $favorite->nextspace->title }}</div>
-                    <div class="text-gray-500">{{ $favorite->nextspace->address }}</div>
+            <div class="border border-gray-200 rounded-md p-3 mb-2 hover:border-blue-300 transition-colors">
+                <div class="flex items-center justify-between">
+                    <div class="min-w-0 flex-1">
+                        <div class="font-medium text-gray-900 truncate">{{ $favorite->nextspace->title }}</div>
+                        <div class="text-sm text-gray-600 truncate">{{ $favorite->nextspace->address }}</div>
+                    </div>
+                    <a href="{{ route('nextspaces.show', $favorite->nextspace->id) }}" 
+                       class="ml-3 text-blue-600 hover:text-blue-700 text-sm font-medium whitespace-nowrap">
+                        View
+                    </a>
                 </div>
-                <a href="{{ route('nextspaces.show', $favorite->nextspace->id) }}" class="text-blue-600 underline">View</a>
             </div>
         @empty
-            <p class="text-gray-500">You have no favorite spaces yet.</p>
+            <div class="text-center py-8">
+                <p class="text-gray-500">No favorite spaces yet</p>
+            </div>
         @endforelse
     </div>
 </x-app-layout>

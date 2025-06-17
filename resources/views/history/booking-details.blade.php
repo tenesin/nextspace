@@ -23,7 +23,7 @@
                 <div class="bg-gray-900 px-6 py-6">
                     <div class="flex items-center justify-between">
                         <div>
-                            <h1 class="text-2xl font-bold text-white mb-2">Booking Confirmation</h1>
+                            <h1 class="text-2xl font-bold text-white mb-2">Konfirmasi Pemesanan</h1>
                             <div class="flex items-center text-gray-300">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a1.994 1.994 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
@@ -79,7 +79,7 @@
                                 <svg class="w-5 h-5 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                 </svg>
-                                <p class="text-blue-800 font-medium">Your booking is confirmed and ready!</p>
+                                <p class="text-blue-800 font-medium">Pemesanan Anda telah dikonfirmasi dan siap!</p>
                             </div>
                         </div>
                     @endif
@@ -117,7 +117,7 @@
                                         <svg class="w-5 h-5 text-gray-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                         </svg>
-                                        <h3 class="font-medium text-gray-900">Date</h3>
+                                        <h3 class="font-medium text-gray-900">Tanggal</h3>
                                     </div>
                                     <p class="text-lg font-bold text-gray-900">{{ $booking->booked_for?->format('M d, Y') ?? 'N/A' }}</p>
                                     <p class="text-gray-500 text-sm">{{ $booking->booked_for?->format('l') ?? '' }}</p>
@@ -129,7 +129,7 @@
                                         <svg class="w-5 h-5 text-gray-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                         </svg>
-                                        <h3 class="font-medium text-gray-900">Time</h3>
+                                        <h3 class="font-medium text-gray-900">Waktu</h3>
                                     </div>
                                     <p class="text-lg font-bold text-gray-900">{{ $booking->booked_time_slot }}</p>
                                 </div>
@@ -137,12 +137,13 @@
                                 <!-- Price Card -->
                                 <div class="bg-white border border-gray-200 rounded-lg p-4">
                                     <div class="flex items-center mb-2">
-                                        <svg class="w-5 h-5 text-gray-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
-                                        </svg>
+                                        <svg class="w-5 h-5 text-gray-600 mr-2" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+  <text x="3" y="17" font-size="14" font-family="Arial, sans-serif" font-weight="bold">Rp</text>
+</svg>
+
                                         <h3 class="font-medium text-gray-900">Total</h3>
                                     </div>
-                                    <p class="text-lg font-bold text-gray-900">${{ number_format($booking->price, 2) }}</p>
+                                    <p class="text-lg font-bold text-gray-900">Rp{{ number_format($booking->price, 0, ',', '.') }}</p>
                                 </div>
                             </div>
 
@@ -162,13 +163,13 @@
                                         <svg class="w-5 h-5 text-gray-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
                                         </svg>
-                                        Additional Services
+                                        Layanan Tambahan
                                     </h3>
                                     <div class="space-y-2">
                                         @foreach($safeSelectedServices as $service)
                                             <div class="flex justify-between items-center py-2 px-3 bg-gray-50 rounded">
                                                 <span class="text-gray-700">{{ $service['name'] }}</span>
-                                                <span class="font-medium text-gray-900">${{ number_format($service['price'], 2) }}</span>
+                                                <span class="font-medium text-gray-900">Rp{{ number_format($service['price'], 0, ',', '.') }}</span>
                                             </div>
                                         @endforeach
                                     </div>
@@ -183,7 +184,7 @@
                                     <svg class="w-5 h-5 text-gray-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
                                     </svg>
-                                    Entry Pass
+                                    Tiket Masuk
                                 </h3>
                                 
                                 @php
@@ -208,7 +209,7 @@
                                             <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 20a8 8 0 100-16 8 8 0 000 16z"/>
                                             </svg>
-                                            Present this QR code upon arrival
+                                            Tunjukkan QR Code ini kepada petugas untuk masuk ke ruang yang telah dipesan.
                                         </p>
                                     </div>
                                 </div>

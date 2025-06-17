@@ -67,7 +67,7 @@
                             </svg>
                         </div>
                         <div>
-                            <p class="text-xl font-semibold text-gray-900">${{ number_format($nextspaces->sum('base_price'), 2) }}</p>
+                            <p class="text-xl font-semibold text-gray-900">Rp{{ number_format($nextspaces->sum('base_price'), 0, ',', '.') }}</p>
                             <p class="text-gray-600 text-sm">Total Value</p>
                         </div>
                     </div>
@@ -185,7 +185,7 @@
                                     </div>  
                                         
                                         <div class="flex items-center justify-between mb-3">
-                                            <span class="text-lg font-semibold text-blue-600">${{ number_format($nextspace->base_price, 2) }}</span>
+                                            <span class="text-lg font-semibold text-blue-600">Rp{{ number_format($nextspace->base_price, 0, ',', '.') }}</span>
                                             <span class="text-xs text-gray-500">Base Price</span>
                                         </div>
                                         

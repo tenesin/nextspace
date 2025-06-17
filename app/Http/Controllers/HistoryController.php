@@ -9,19 +9,28 @@ use App\Models\User;
 
 class HistoryController extends Controller
 {
-    public function index()
-    {
-        $user = Auth::user();
+    public function index(Request $request)
+{
+    $query = Booking::where('user_id', Auth::id());
 
-        if (!$user) {
-            return redirect()->route('login')->with('status', 'Please log in to view your history.');
-        }
-
-        $bookings = Booking::where('user_id', $user->id)->latest()->get();
-
-        return view('history.index', compact('bookings'));
+    switch ($request->input('sort')) {
+        case 'oldest':
+            $query->orderBy('created_at', 'asc');
+            break;
+        case 'highest':
+            $query->orderBy('price', 'desc');
+            break;
+        case 'lowest':
+            $query->orderBy('price', 'asc');
+            break;
+        default:
+            $query->orderBy('created_at', 'desc');
     }
 
+    $bookings = $query->paginate(10);
+
+    return view('history.index', compact('bookings'));
+}
     public function showBookingDetails($booking_id)
 {
     $booking = Booking::where('booking_id', $booking_id)
@@ -99,5 +108,12 @@ public function remove(Booking $booking)
     $booking->delete();
 
     return back()->with('status', 'Booking removed from your history.');
+}
+public function invoice($booking_id)
+{
+    // Your logic to generate or show the invoice
+    // Example:
+    $booking = Booking::where('booking_id', $booking_id)->firstOrFail();
+    return view('history.invoice', compact('booking'));
 }
 }

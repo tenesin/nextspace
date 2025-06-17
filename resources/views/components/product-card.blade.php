@@ -9,17 +9,17 @@
         @if($status === 'active')
             <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 shadow-sm">
                 <span class="w-1.5 h-1.5 mr-1.5 bg-green-400 rounded-full animate-pulse"></span>
-                Available
+                Tersedia
             </span>
         @elseif($status === 'busy')
             <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800 shadow-sm">
                 <span class="w-1.5 h-1.5 mr-1.5 bg-orange-400 rounded-full"></span>
-                Busy
+                Sibuk
             </span>
         @else
             <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600 shadow-sm">
                 <span class="w-1.5 h-1.5 mr-1.5 bg-gray-400 rounded-full"></span>
-                Unavailable
+                Tidak Tersedia
             </span>
         @endif
     </div>
@@ -91,7 +91,7 @@
     $formattedHours = '';
     if (is_iterable($hours) && count($hours)) {
         $formattedHours = collect($hours)->map(function($hour) {
-            $label = $hour->day_type === 'mon-fri' ? 'Monday - Friday' : 'Saturday - Sunday';
+            $label = $hour->day_type === 'mon-fri' ? 'Senin - Jumat' : 'Sabtu - Minggu';
             return $label . ' ' . $hour->open_time . ' - ' . $hour->close_time;
         })->implode('<br>');
     }
@@ -118,7 +118,7 @@
             
             @if(!empty($safeTimeSlots))
                 <div class="mb-4">
-                    <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Available Times</p>
+                    <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Jam Tersedia</p>
                     <div class="flex flex-wrap gap-2">
                         @foreach (array_slice($safeTimeSlots, 0, 4) as $slot)
                             <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100 transition-colors duration-200">
@@ -143,7 +143,7 @@
             <div class="mt-4">
                 <div class="flex items-center justify-between">
                     <span class="text-sm font-medium text-blue-600 group-hover:text-blue-700 transition-colors duration-200">
-                        View Details
+                        Lihat Detail
                     </span>
                     <svg class="w-4 h-4 text-blue-600 group-hover:text-blue-700 transform group-hover:translate-x-1 transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
