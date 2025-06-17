@@ -116,4 +116,17 @@ public function invoice($booking_id)
     $booking = Booking::where('booking_id', $booking_id)->firstOrFail();
     return view('history.invoice', compact('booking'));
 }
+
+public function payAndCheckin($bookingId)
+{
+    $booking = Booking::findOrFail($bookingId);
+    $booking->status = 'checked in';
+    $booking->checked_in_at = now();
+    $booking->save();
+
+    // Optionally notify user or do other logic
+
+    return redirect()->route('history.index')
+        ->with('success', 'Payment received and checked in!');
+}
 }

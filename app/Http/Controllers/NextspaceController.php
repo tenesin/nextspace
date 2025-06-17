@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Http\Request;
 use App\Models\Nextspace;
-use App\Models\TimeSlot;
 use App\Models\Favorite;
 
 class NextspaceController extends Controller
@@ -28,16 +27,15 @@ class NextspaceController extends Controller
     public function show($id)
     {
         // Ambil nextspace beserta relasinya
-        $nextspace = Nextspace::with(['amenities', 'services', 'timeSlots'])->findOrFail($id);
+        $nextspace = Nextspace::with(['amenities', 'services', 'timeSlots', 'reviews.user'])->findOrFail($id);
 
         // Cek apakah nextspace ini sudah difavoritkan oleh user yang sedang login
         $isFavorited = false;
-if (Auth::check()) {
-    $isFavorited = Favorite::where('user_id', Auth::id())
-        ->where('nextspace_id', $nextspace->id)
-        ->exists();
-}
-
+        if (Auth::check()) {
+            $isFavorited = Favorite::where('user_id', Auth::id())
+                ->where('nextspace_id', $nextspace->id)
+                ->exists();
+        }
 
         return view('nextspaces.show', compact('nextspace', 'isFavorited'));
     }

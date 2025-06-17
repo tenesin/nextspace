@@ -57,7 +57,7 @@
                     </div>
                 </div>
             </div>
-            
+
             {{-- Manual Booking Check-in --}}
             <div class="bg-white shadow-sm rounded-lg p-6 mb-6">
                 <h2 class="text-lg font-semibold mb-3 text-gray-900">Manual Booking Check-in</h2>

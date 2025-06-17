@@ -17,6 +17,7 @@ This project is developed as the final project for the subject **PPPL**.
 ## Database Structure
 
 **Main Tables:**
+
 - `users`: id, name, email, password, role, ...
 - `nextspaces`: id, title, address, description, base_price, ...
 - `bookings`: id, booking_id, user_id, nextspace_id, booked_for, booked_time_slot, status, checked_in_at, ...
@@ -59,34 +60,40 @@ This project is developed as the final project for the subject **PPPL**.
 ## Setup
 
 1. **Clone the repository:**
+
     ```sh
     git clone <repo-url>
     cd nextspace
     ```
 
 2. **Install dependencies:**
+
     ```sh
     composer install
     npm install
     ```
 
 3. **Copy and edit environment file:**
+
     ```sh
     cp .env.example .env
     # Edit .env for your database and mail settings
     ```
 
 4. **Generate application key:**
+
     ```sh
     php artisan key:generate
     ```
 
 5. **Run migrations and seeders:**
+
     ```sh
     php artisan migrate --seed
     ```
 
 6. **Build frontend assets:**
+
     ```sh
     npm run build
     ```

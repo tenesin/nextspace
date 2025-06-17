@@ -6,10 +6,13 @@
     "trailingComma": "es5",
     "plugins": ["prettier-plugin-blade"],
     "blade": {
-        "directiveSort": "alphabetical",
+        "indentSize": 4,
+        "wrapAttributes": "force-aligned",
+        "wrapLineLength": 100,
         "sortAttributes": true,
         "sortAttributesGroups": true,
         "sortClassAttributes": true,
-        "sortStyleAttributes": true
+        "sortStyleAttributes": true,
+        "directiveSort": "alphabetical"
     }
 }

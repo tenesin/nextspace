@@ -83,6 +83,7 @@ Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.
 Route::post('/favorites/toggle/{nextspace}', [FavoriteController::class, 'toggle'])->name('favorites.toggle');
 
 Route::get('/history/{booking_id}/invoice', [HistoryController::class, 'invoice'])->name('history.invoice');
+Route::post('/history/{booking}/pay-and-checkin', [HistoryController::class, 'payAndCheckin'])->name('history.payAndCheckin');
 
 
 require __DIR__.'/auth.php';
