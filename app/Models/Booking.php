@@ -22,23 +22,18 @@ class Booking extends Model
         'booking_date',
         'price',
         'status',
-        'selected_services_details', // Add this new column
+        'selected_services_details',
     ];
 
     protected $casts = [
         'booked_for' => 'date',
         'booking_date' => 'date',
         'price' => 'decimal:2',
-        'selected_services_details' => 'array', // Cast to array
+        'selected_services_details' => 'array',
     ];
 
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
-    }
-
-    public function bookings() // or orders()
-    {
-        return $this->hasMany(Booking::class); // or Order::class
     }
 }

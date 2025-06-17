@@ -160,9 +160,7 @@
                                     <div class="grid grid-cols-4 gap-2">
                                         @foreach ($nextspace->timeSlots as $slot)
                                             <div
-                                                class="text-center p-2 rounded-lg border text-xs font-medium transition-all {{
-                                                    $slot->pivot->capacity <= 0 ? 'bg-gray-100 text-gray-400 border-gray-200 opacity-60' : 'bg-white text-blue-700 border-blue-200 hover:bg-blue-50 cursor-pointer'
-                                                }}"
+                                                class="text-center p-2 rounded-lg border text-xs font-medium transition-all {{ $slot->pivot->capacity <= 0 ? 'bg-gray-100 text-gray-400 border-gray-200 opacity-60' : 'bg-white text-blue-700 border-blue-200 hover:bg-blue-50 cursor-pointer' }}"
                                             >
                                                 <div>{{ $slot->slot }}</div>
                                                 <div

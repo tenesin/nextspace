@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\NextspaceController as AdminNextspaceController;
 use Illuminate\Support\Facades\Auth; // Import Auth facade
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\FavoriteController;
+use App\Http\Controllers\Admin\BookingController;
 
 Route::get('/', function () {
     // Check if user is authenticated
@@ -57,7 +58,14 @@ Route::delete('/history/remove/{booking}', [HistoryController::class, 'remove'])
 Route::get('/qr-code/{data}', [QrCodeController::class, 'generate'])->name('qr.generate');
 
 Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(function () {
-    // IMPORTANT: Place specific routes like 'export-report' BEFORE resource routes.
+    
+
+    Route::get('booking/manual-checkin', function () {
+        return view('admin.bookings.manual-checkin');
+    })->name('booking.manualCheckin.form');
+
+    Route::post('booking/manual-checkin', [BookingController::class, 'manualCheckin'])->name('booking.manualCheckin');
+
     Route::get('nextspaces/export-report', [AdminNextspaceController::class, 'exportReport'])->name('nextspaces.export-report');
     Route::resource('nextspaces', AdminNextspaceController::class);
 });
@@ -75,5 +83,6 @@ Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.
 Route::post('/favorites/toggle/{nextspace}', [FavoriteController::class, 'toggle'])->name('favorites.toggle');
 
 Route::get('/history/{booking_id}/invoice', [HistoryController::class, 'invoice'])->name('history.invoice');
+
 
 require __DIR__.'/auth.php';

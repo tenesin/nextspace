@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Nextspace;
-use App\Models\NextspaceHour;
+use App\Models\Booking;
 use App\Models\Amenity;
 use App\Models\Service;
 use App\Models\TimeSlot;
@@ -176,4 +176,21 @@ class NextspaceController extends Controller
     {
         return Excel::download(new NextspacesExport, 'nextspaces_business_report.xlsx');
     }
+
+    public function showCheckin($bookingId)
+{
+    $booking = Booking::findOrFail($bookingId);
+    return view('admin.bookings.checkin', compact('booking'));
+}
+
+public function processCheckin($bookingId)
+{
+    $booking = Booking::findOrFail($bookingId);
+    $booking->status = 'checked in';
+    $booking->checked_in_at = now();
+    $booking->save();
+
+    return redirect()->route('admin.booking.checkin.show', $bookingId)
+        ->with('success', 'Check-in berhasil!');
+}
 }

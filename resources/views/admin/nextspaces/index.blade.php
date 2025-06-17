@@ -57,6 +57,49 @@
                     </div>
                 </div>
             </div>
+            
+            {{-- Manual Booking Check-in --}}
+            <div class="bg-white shadow-sm rounded-lg p-6 mb-6">
+                <h2 class="text-lg font-semibold mb-3 text-gray-900">Manual Booking Check-in</h2>
+
+                @if (session('success'))
+                    <div class="mb-3 p-2 bg-green-100 text-green-800 rounded">
+                        {{ session('success') }}
+                    </div>
+                @elseif (session('error'))
+                    <div class="mb-3 p-2 bg-red-100 text-red-800 rounded">
+                        {{ session('error') }}
+                    </div>
+                @endif
+                <form
+                    method="POST"
+                    action="{{ route('admin.booking.manualCheckin') }}"
+                    class="flex gap-2 items-end"
+                >
+                    @csrf
+                    <div class="flex-1">
+                        <label
+                            for="booking_id"
+                            class="block text-sm font-medium text-gray-700 mb-1"
+                        >
+                            Booking ID
+                        </label>
+                        <input
+                            type="text"
+                            name="booking_id"
+                            id="booking_id"
+                            class="w-full border rounded px-3 py-2"
+                            required
+                        />
+                    </div>
+                    <button
+                        type="submit"
+                        class="bg-blue-600 text-white px-4 py-2 rounded font-semibold hover:bg-blue-700 transition"
+                    >
+                        Check In
+                    </button>
+                </form>
+            </div>
 
             {{-- Statistics Cards --}}
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
