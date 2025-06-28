@@ -1,110 +1,140 @@
-# NextSpace
-
-This project is developed as the final project for the subject **PPPL**.
+Here’s a **cleaned up and comprehensive** version of your markdown for the **NextSpace** project:
 
 ---
 
-## Group Members
+# 🧠 NextSpace
 
-- Name 1 (NIM)
-- Name 2 (NIM)
-- Name 3 (NIM)
-- Name 4 (NIM)
-- (Add or remove as needed)
+> Final project for the **PPPL** (Pemrograman Proyek Perangkat Lunak) course.
 
 ---
 
-## Database Structure
+## 👥 Group Members
 
-**Main Tables:**
-
-- `users`: id, name, email, password, role, ...
-- `nextspaces`: id, title, address, description, base_price, ...
-- `bookings`: id, booking_id, user_id, nextspace_id, booked_for, booked_time_slot, status, checked_in_at, ...
-- `amenities`: id, name, ...
-- `services`: id, name, ...
-- `favorites`: id, user_id, nextspace_id, ...
-- `reviews`: id, user_id, nextspace_id, comment, rating, ...
-- (Add other tables as needed)
+* Name 1 (NIM)
+* Name 2 (NIM)
+* Name 3 (NIM)
+* Name 4 (NIM)
+  \**(Add or remove as needed)*
 
 ---
 
-## Folder Structure
+## 🗄️ Database Structure
+
+### 🔐 `users`
+
+* `id`, `name`, `email`, `password`, `role`, ...
+
+### 🏢 `nextspaces`
+
+* `id`, `title`, `address`, `description`, `base_price`, ...
+
+### 📅 `bookings`
+
+* `id`, `booking_id`, `user_id`, `nextspace_id`, `booked_for`, `booked_time_slot`, `status`, `checked_in_at`, ...
+
+### 🛠️ `amenities`
+
+* `id`, `name`, ...
+
+### 📦 `services`
+
+* `id`, `name`, ...
+
+### ⭐ `favorites`
+
+* `id`, `user_id`, `nextspace_id`, ...
+
+### 📝 `reviews`
+
+* `id`, `user_id`, `nextspace_id`, `comment`, `rating`, ...
+
+*You can extend this as your project evolves.*
+
+---
+
+## 📁 Project Folder Structure
 
 ```
-/app
-    /Http
-        /Controllers
-            /Admin
-            /Auth
-        /Models
-/config
-/database
-    /migrations
-    /seeders
-/public
-/resources
-    /views
-        /admin
-        /nextspaces
-        /favorites
-        /history
-        /components
-        /layouts
-/routes
-    web.php
+nextspace/
+├── app/
+│   └── Http/
+│       └── Controllers/
+│           ├── Admin/
+│           └── Auth/
+│       └── Models/
+├── config/
+├── database/
+│   ├── migrations/
+│   └── seeders/
+├── public/
+├── resources/
+│   └── views/
+│       ├── admin/
+│       ├── nextspaces/
+│       ├── favorites/
+│       ├── history/
+│       ├── components/
+│       └── layouts/
+├── routes/
+│   └── web.php
 ```
 
 ---
 
-## Setup
+## ⚙️ Setup Instructions
 
-1. **Clone the repository:**
+### 1. Clone the Repository
 
-    ```sh
-    git clone <repo-url>
-    cd nextspace
-    ```
+```bash
+git clone <repo-url>
+cd nextspace
+```
 
-2. **Install dependencies:**
+### 2. Install Backend & Frontend Dependencies
 
-    ```sh
-    composer install
-    npm install
-    ```
+```bash
+composer install
+npm install
+```
 
-3. **Copy and edit environment file:**
+### 3. Configure Environment
 
-    ```sh
-    cp .env.example .env
-    # Edit .env for your database and mail settings
-    ```
+```bash
+cp .env.example .env
+# Edit .env with your DB and mail config
+```
 
-4. **Generate application key:**
+### 4. Generate Application Key
 
-    ```sh
-    php artisan key:generate
-    ```
+```bash
+php artisan key:generate
+```
 
-5. **Run migrations and seeders:**
+### 5. Run Migrations and Seeders
 
-    ```sh
-    php artisan migrate --seed
-    ```
+```bash
+php artisan migrate --seed
+```
 
-6. **Build frontend assets:**
+### 6. Build Frontend Assets
 
-    ```sh
-    npm run build
-    ```
+```bash
+npm run build
+```
 
-7. **Start the development server:**
-    ```sh
-    php artisan serve
-    ```
+### 7. Start Development Server
+
+```bash
+php artisan serve
+```
 
 ---
 
-## License
+## 📄 License
 
-This project is for academic purposes only.
+This project is created **for academic purposes only**.
+All rights reserved by the authors.
+
+---
+
+If you'd like, I can also generate a `README.md` file with this content or help add badges, screenshots, or contribution guidelines.

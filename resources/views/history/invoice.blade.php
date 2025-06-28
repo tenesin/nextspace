@@ -1,33 +1,42 @@
 {{-- filepath: resources/views/history/invoice.blade.php --}}
 <x-app-layout>
-    <div class="max-w-xl mx-auto bg-white shadow rounded-lg p-8 mt-8">
-        <h2 class="text-2xl font-bold mb-4">Invoice Pemesanan</h2>
-        <div class="mb-2">
-            <strong>Kode Booking:</strong>
-            {{ $booking->booking_id }}
+    <div class="min-h-screen flex flex-col bg-white">
+        <div class="flex-1 max-w-2xl mx-auto py-10 px-4">
+            <div class="mb-8">
+                <h1 class="text-2xl font-bold text-gray-800 mb-2">Invoice</h1>
+                <p class="text-gray-600">Invoice #: {{ $booking->booking_id }}</p>
+                <p class="text-gray-600">Date: {{ $booking->created_at->format('d M Y') }}</p>
+            </div>
+
+            <div class="mb-6">
+                <h2 class="text-lg font-semibold text-gray-700 mb-2">Customer</h2>
+                <div class="text-gray-700">
+                    <div>{{ $booking->user->name ?? '-' }}</div>
+                    <div>{{ $booking->user->email ?? '-' }}</div>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <h2 class="text-lg font-semibold text-gray-700 mb-2">Space Details</h2>
+                <div class="text-gray-700">
+                    <div>{{ $booking->nextspace_title }}</div>
+                    <div>{{ $booking->nextspace_address }}</div>
+                    <div>Time Slot: {{ $booking->booked_time_slot }}</div>
+                    <div>Date: {{ $booking->booked_for->format('d M Y') }}</div>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <h2 class="text-lg font-semibold text-gray-700 mb-2">Payment</h2>
+                <div class="text-gray-700">
+                    <div>Status: <span class="font-semibold">{{ ucfirst($booking->status) }}</span></div>
+                    <div>Total: <span class="font-bold text-blue-700">Rp{{ number_format($booking->price, 0, ',', '.') }}</span></div>
+                </div>
+            </div>
+
+            <div class="mt-10 text-sm text-gray-400">
+                Thank you for booking with NextSpace!
+            </div>
         </div>
-        <div class="mb-2">
-            <strong>Status:</strong>
-            {{ $booking->status }}
-        </div>
-        <div class="mb-2">
-            <strong>Nama Pemesan:</strong>
-            {{ $booking->user->name ?? '-' }}
-        </div>
-        <div class="mb-2">
-            <strong>Tanggal Booking:</strong>
-            {{ $booking->created_at->format('d M Y H:i') }}
-        </div>
-        <div class="mb-2">
-            <strong>Harga:</strong>
-            Rp{{ number_format($booking->price, 0, ',', '.') }}
-        </div>
-        {{-- Tambahkan detail lain sesuai kebutuhan --}}
-        <a
-            href="{{ route('history.index') }}"
-            class="inline-block mt-6 px-4 py-2 bg-primary text-white rounded hover:bg-primary/90"
-        >
-            Kembali ke Riwayat
-        </a>
     </div>
 </x-app-layout>
