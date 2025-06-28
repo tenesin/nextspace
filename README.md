@@ -1,3 +1,5 @@
+Here is the **Markdown file format** for your `README.md`—you can copy and paste it directly into your project:
+
 ---
 
 ```markdown
@@ -13,7 +15,7 @@
 - Name 2 (NIM)
 - Name 3 (NIM)
 - Name 4 (NIM)  
-*_(Add or remove as needed)_
+*(Add or remove as needed)*
 
 ---
 
@@ -39,8 +41,6 @@
 
 ### 📝 `reviews`
 - `id`, `user_id`, `nextspace_id`, `comment`, `rating`, ...
-
-*You can extend this as your project evolves.*
 
 ---
 
@@ -132,4 +132,6 @@ All rights reserved by the authors.
 ```
 
 ---
+
+Let me know if you'd like me to insert your actual group members or repo URL into the template.
 ```
