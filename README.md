@@ -6,11 +6,16 @@
 
 ## 👥 Group Members
 
-* Name 1 (NIM)
-* Name 2 (NIM)
-* Name 3 (NIM)
-* Name 4 (NIM)
-  \**(Add or remove as needed)*
+* Viqi Alvianto (5026221001)
+* Regina Dwi Aulia (5026221063)
+* Luthfi Rihadatul Fajri (5026221077)
+* Muhammad Fauzan (5026221080)
+* Ashila Mahdiyyah (5026221148)
+* Adithya Eka Pramudita (5026221164)
+* Dinanti Vita Rachman (5026221190)
+* Ratna Amalia Azzahra (5026221209)
+* Muhammad Rafa Akbar (5026221213)
+* Ishaq Yudha Alnafi Syahputra (5026221214)
 
 ---
 
@@ -44,7 +49,6 @@
 
 * `id`, `user_id`, `nextspace_id`, `comment`, `rating`, ...
 
-*You can extend this as your project evolves.*
 
 ---
 
