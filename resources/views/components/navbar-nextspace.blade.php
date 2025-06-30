@@ -36,12 +36,15 @@
             >
                 Home
             </a>
-            <a
-                href="{{ route('history.index') }}"
-                class="text-text-secondary hover:text-primary transition-colors font-medium"
-            >
-                My Bookings
-            </a>
+            {{-- My Bookings link - Desktop --}}
+            @unless (Auth::check() && Auth::user()->role === 'admin')
+                <a
+                    href="{{ route('history.index') }}"
+                    class="text-text-secondary hover:text-primary transition-colors font-medium"
+                >
+                    My Bookings
+                </a>
+            @endunless
             <a
                 href="{{ route('favorites.index') }}"
                 class="text-yellow-600 hover:text-yellow-500 transition-colors font-medium flex items-center"
@@ -100,12 +103,15 @@
             >
                 Home
             </a>
-            <a
-                href="{{ route('history.index') }}"
-                class="block px-3 py-2 rounded-md text-base font-medium text-text-secondary hover:bg-gray-100 hover:text-primary transition-colors"
-            >
-                My Bookings
-            </a>
+            {{-- My Bookings link - Mobile --}}
+            @unless (Auth::check() && Auth::user()->role === 'admin')
+                <a
+                    href="{{ route('history.index') }}"
+                    class="block px-3 py-2 rounded-md text-base font-medium text-text-secondary hover:bg-gray-100 hover:text-primary transition-colors"
+                >
+                    My Bookings
+                </a>
+            @endunless
             <a
                 href="{{ route('favorites.index') }}"
                 class="block px-3 py-2 rounded-md text-base font-medium text-yellow-600 hover:bg-gray-100 hover:text-yellow-500 transition-colors items-center"
